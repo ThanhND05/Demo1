@@ -21,10 +21,10 @@ public class SignUpDTO {
     @NotEmpty(message = "Please enter a valid password.")
     private String password;
 
-    @NotEmpty(message = "Please enter a valid password.")
+    @NotEmpty(message = "Please enter a valid phone.")
     private String phone;
 
-    @NotEmpty(message = "Please enter a valid password.")
+    @NotEmpty(message = "Please enter a valid phone.")
     private String address;
 
 

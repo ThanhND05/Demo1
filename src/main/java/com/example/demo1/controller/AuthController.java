@@ -8,6 +8,7 @@ import com.example.demo1.payload.SignUpDTO;
 import com.example.demo1.repository.RoleRepository;
 import com.example.demo1.repository.UserRepository;
 import com.example.demo1.security.JwtTokenProvider;
+import com.example.demo1.service.impl.TokenBlacklistService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,6 +42,9 @@ public class AuthController {
     @Autowired
     private JwtTokenProvider tokenProvider;
 
+    @Autowired
+    private TokenBlacklistService tokenBlacklistService;
+
     @PostMapping("/login")
     public ResponseEntity<JWTAuthResponse> authenticateUser(@RequestBody LoginDTO loginDto) {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
@@ -72,11 +76,13 @@ public class AuthController {
         user.setName(signUpDto.getUsername());
         user.setEmail(signUpDto.getEmail());
         user.setPassword(passwordEncoder.encode(signUpDto.getPassword()));
+        user.setPhone(signUpDto.getPhone());
+        user.setAddress(signUpDto.getAddress());
 
-        Role role = roleRepository.findByRoleName("ROLE_ADMIN");
+        Role role = roleRepository.findByRoleName("ROLE_USER");
         if (role == null) {
             // Create a default role when "ROLE_ADMIN" is not found
-            role = new Role("ROLE_ADMIN");
+            role = new Role("ROLE_USER");
             roleRepository.save(role);
         }
 
@@ -97,9 +103,14 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<String> logout() {
+    public ResponseEntity<String> logout(@RequestHeader("Authorization") String authHeader) {
         // Perform logout actions here, invalidate token, etc.
         // For this example, we'll just return a success message.
-        return ResponseEntity.ok("Logged out successfully");
+        if(authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7);
+            tokenBlacklistService.blacklistToken(token);
+            return ResponseEntity.ok("Logged out successfully");
+        }
+        return ResponseEntity.badRequest().body("No token found in request");
     }
 }

@@ -28,10 +28,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void saveUser(SignUpDTO signUpDTO) {
-        Role role = roleRepository.findByRoleName(TableConstants.ADMIN);
+        Role role = roleRepository.findByRoleName(TableConstants.USER);
 
         if (role == null) {
-            role = new Role(TableConstants.ADMIN);
+            role = new Role(TableConstants.USER);
             roleRepository.save(role);
         }
 

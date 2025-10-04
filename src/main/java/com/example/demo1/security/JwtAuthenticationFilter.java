@@ -1,5 +1,6 @@
 package com.example.demo1.security;
 
+import com.example.demo1.service.impl.TokenBlacklistService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,6 +22,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private CustomUserDetailsService customUserDetailsService;
 
+    @Autowired
+    private TokenBlacklistService tokenBlacklistService;
+
+
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
@@ -29,6 +34,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String token = getJWTfromRequest(request);
         // validate token
         if(StringUtils.hasText(token) && tokenProvider.validateToken(token)){
+            // check xem token có trong blacklist không
+            if (tokenBlacklistService.isTokenBlacklisted(token)) {
+                // Nếu token đã logout thì chặn luôn
+                filterChain.doFilter(request, response);
+                return;
+            }
             // get username from token
             String username = tokenProvider.getUsernameFromJWT(token);
             // load user associated with token
