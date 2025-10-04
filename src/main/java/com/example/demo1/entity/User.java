@@ -26,9 +26,10 @@ public class User {
     private String password;
     private String phone;
     private String address;
-    private LocalDate createdAt;
+    @Column(updatable = false)
+    private LocalDate createdAt = LocalDate.now();
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_roles",
             joinColumns = @JoinColumn(
