@@ -1,5 +1,6 @@
 package com.example.demo1.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -44,6 +45,11 @@ public class User {
             )
     )
     private Set<Role> roles;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private Cart cart;
+
 
     public User(String name, String email, String password, Set<Role> roles, String phone, String address) {
         this.name = name;

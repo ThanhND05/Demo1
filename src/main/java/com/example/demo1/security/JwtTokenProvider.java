@@ -32,12 +32,18 @@ public class JwtTokenProvider {
 
     // generate token
     public String generateToken(Authentication authentication) {
-        String username = authentication.getName();
+        org.springframework.security.core.userdetails.User userPrincipal =
+                (org.springframework.security.core.userdetails.User) authentication.getPrincipal();
+        var claims = Jwts.claims().setSubject(userPrincipal.getUsername());
+        claims.put("roles", userPrincipal.getAuthorities().stream()
+                .map(auth -> auth.getAuthority())
+                .toList());
+
         Date currentDate = new Date();
         Date expireDate = new Date(currentDate.getTime() + jwtExpirationInMs);
 
         return Jwts.builder()
-                .setSubject(username)
+                .setClaims(claims)
                 .setIssuedAt(currentDate)
                 .setExpiration(expireDate)
                 .signWith(key, SignatureAlgorithm.HS512)

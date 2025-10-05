@@ -28,12 +28,12 @@ public class ProductController {
         return productService.updateProduct(productDTO);
     }
 
-    @GetMapping("/{productId}")
+    @GetMapping("/id/{productId}")
     public ProductDTO getProductById(@PathVariable("productId") Integer productId) {
         return productService.getProductById(productId);
     }
 
-    @GetMapping("/{productName}")
+    @GetMapping("/name/{productName}")
     public List<ProductDTO> getProductByName(@PathVariable("productName") String productName) {
         return productService.searchProductsByName(productName);
     }
