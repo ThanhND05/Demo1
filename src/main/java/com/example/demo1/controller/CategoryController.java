@@ -29,7 +29,7 @@ public class CategoryController {
         return categoryService.updateCategory(category);
     }
 
-    @GetMapping("/{categoryId}")
+    @GetMapping("/id/{categoryId}")
     public CategoryDTO getCategoryById(@PathVariable("categoryId") Integer categoryId) {
         return categoryService.getCategoryById(categoryId);
     }
@@ -40,7 +40,7 @@ public class CategoryController {
         categoryService.deleteCategory(categoryId);
     }
 
-    @GetMapping("/{categoryName}")
+    @GetMapping("/name/{categoryName}")
     public List<CategoryDTO> getCategoryByName(@PathVariable("categoryName") String categoryName) {
         return categoryService.searchCategoryByName(categoryName);
     }
