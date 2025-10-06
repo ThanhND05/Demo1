@@ -5,13 +5,13 @@ import com.example.demo1.payload.CartItemDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {ProductConverter.class})
 public interface CartItemConverter {
     @Mapping(source = "cart.cartId", target = "cartId")
-    @Mapping(source = "product.productId", target = "productId")
+    @Mapping(source = "product", target = "product")
     CartItemDTO toDTO(CartItem cartItem);
 
-    @Mapping(target = "cart.cartId", source = "cartId")
-    @Mapping(target = "product.productId", source = "productId")
+    @Mapping(target = "cart", ignore = true)
+    @Mapping(target = "product", source = "product")
     CartItem toEntity(CartItemDTO cartItemDTO);
 }

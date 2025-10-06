@@ -1,6 +1,8 @@
 package com.example.demo1.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,9 +25,10 @@ public class Cart {
     @OneToOne
     @JoinColumn(name = "userId", nullable = false, unique = true,
         foreignKey = @ForeignKey(name = "FK_cart_user"))
-    @JsonBackReference
+    @JsonIgnore
     private User user;
 
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private Set<CartItem> items;
 }

@@ -9,6 +9,6 @@ import java.util.Set;
 public class CartDTO {
     private Integer cartId;
     private LocalDateTime createdAt =  LocalDateTime.now();
-    private Integer userId;
+    private UserDTO user;
     private Set<CartItemDTO> items;
 }

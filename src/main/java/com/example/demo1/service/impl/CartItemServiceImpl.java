@@ -30,7 +30,7 @@ public class CartItemServiceImpl implements CartItemService {
     public CartItemDTO addCartItem(CartItemDTO cartItemDTO) {
         Cart cart = cartRepository.findById(cartItemDTO.getCartId()).
                 orElseThrow(() -> new RuntimeException("Cart not found"));
-        Product product = productRepository.findById(cartItemDTO.getProductId())
+        Product product = productRepository.findById(cartItemDTO.getProduct().getProductId())
                 .orElseThrow(() -> new RuntimeException("Product not found"));
         CartItem cartItem = new CartItem();
         cartItem.setCart(cart);
@@ -51,10 +51,10 @@ public class CartItemServiceImpl implements CartItemService {
             cartItem.setQuantity(cartItemDTO.getQuantity());
         }
 
-        if(cartItemDTO.getProductId() != null &&
-                !cartItemDTO.getProductId().equals(cartItem.getProduct().getProductId())) {
+        if(cartItemDTO.getProduct().getProductId() != null &&
+                !cartItemDTO.getProduct().getProductId().equals(cartItem.getProduct().getProductId())) {
 
-            Product product = productRepository.findById(cartItemDTO.getProductId())
+            Product product = productRepository.findById(cartItemDTO.getProduct().getProductId())
                     .orElseThrow(() -> new RuntimeException("Product not found"));
             cartItem.setProduct(product);
         }
