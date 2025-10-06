@@ -24,14 +24,14 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public CartDTO getCartByUserId(Integer userId) {
-        User user = userRepository.findById(userId).
-                orElseThrow(() -> new RuntimeException("User not found!"));
-        Cart cart = user.getCart();
-        if(cart==null){
-            cart = new Cart();
-            cart.setUser(user);
-            cart = cartRepository.save(cart);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found!"));
+
+        Cart cart = user.getCart(); // cart đã có từ khi register
+        if (cart == null) {
+            throw new RuntimeException("Cart not found for this user!");
         }
+
         return cartConverter.toDTO(cart);
     }
 

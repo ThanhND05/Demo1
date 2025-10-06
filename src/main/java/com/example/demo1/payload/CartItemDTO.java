@@ -1,12 +1,15 @@
 package com.example.demo1.payload;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 public class CartItemDTO {
     private Integer cartItemId;
     private Integer quantity;
     private Integer cartId;
-    private ProductDTO product;
+    private ProductShortDTO product;
 
 }

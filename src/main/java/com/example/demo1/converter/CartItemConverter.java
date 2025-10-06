@@ -5,7 +5,7 @@ import com.example.demo1.payload.CartItemDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring", uses = {ProductConverter.class})
+@Mapper(componentModel = "spring", uses = {ProductShortConverter.class})
 public interface CartItemConverter {
     @Mapping(source = "cart.cartId", target = "cartId")
     @Mapping(source = "product", target = "product")

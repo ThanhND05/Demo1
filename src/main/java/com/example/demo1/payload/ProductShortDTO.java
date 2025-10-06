@@ -6,22 +6,15 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
-public class ProductDTO {
+public class ProductShortDTO {
     private Integer productId;
     private String productName;
     private String description;
     private BigDecimal price;
-    private Integer stockQuantity;
     private ProductEnum size;
     private String color;
     private String imageUrl;
-    private LocalDateTime createdAt = LocalDateTime.now();
-
-    private Integer categoryId;
-
-    private String categoryName;
 }

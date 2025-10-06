@@ -1,5 +1,6 @@
 package com.example.demo1.controller;
 
+import com.example.demo1.entity.Cart;
 import com.example.demo1.entity.Role;
 import com.example.demo1.entity.User;
 import com.example.demo1.payload.JWTAuthResponse;
@@ -91,8 +92,11 @@ public class AuthController {
         roles.add(role);
         user.setRoles(roles);
 
-        userRepository.save(user);
+        Cart cart = new Cart();
+        cart.setUser(user);
+        user.setCart(cart);
 
+        userRepository.save(user);
         return new ResponseEntity<>("User registered successfully", HttpStatus.OK);
     }
 
