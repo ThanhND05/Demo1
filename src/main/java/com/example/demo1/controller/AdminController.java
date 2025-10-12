@@ -33,6 +33,16 @@ public class AdminController {
         }
         return ResponseEntity.notFound().build();
     }
+        @GetMapping("/revenue")
+    public ResponseEntity<Map<String, Object>> getTotalRevenue() {
+        BigDecimal totalRevenue = paymentRepository.calculateTotalRevenue();
+        if (totalRevenue == null) {
+            totalRevenue = BigDecimal.ZERO;
+        }
+        Map<String, Object> response = new HashMap<>();
+        response.put("totalRevenue", totalRevenue);
+        return ResponseEntity.ok(response);
+    }
 
 
 }
