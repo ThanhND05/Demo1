@@ -1,15 +1,22 @@
 package com.example.demo1.service;
 
-import com.example.demo1.payload.OrdersDTO; 
+import com.example.demo1.entity.OrderStatus;
+import com.example.demo1.payload.OrdersDTO;
+import org.springframework.data.domain.Page;
+
 import java.util.List;
 
 public interface OrdersService {
-    List<OrdersDTO> findAll();
-    OrdersDTO createOrder(Integer userId, OrdersDTO orderDTO);
+    // Thao tác với đơn hàng
+    OrdersDTO createOrderFromCart(Integer userId, String shippingAddress);
     OrdersDTO getOrderById(Integer orderId);
-    List<OrdersDTO> getOrdersByUserId(Integer userId);
-    OrdersDTO updateOrder(Integer orderId, OrdersDTO orderDTO);
-    OrdersDTO updateOrderStatus(Integer orderId, OrdersDTO orderDTO);
-    OrdersDTO cancelOrder(Integer orderId);
+    Page<OrdersDTO> getOrdersByUserId(Integer userId, int page, int size);
+    OrdersDTO updateOrderStatus(Integer orderId, OrderStatus status);
     void deleteOrder(Integer orderId);
+    OrdersDTO cancelOrder(Integer orderId, Integer userId);
+    // Thao tác với các mục hàng bên trong đơn hàng
+    OrdersDTO addItemToOrder(Integer orderId, Integer productId, int quantity);
+    OrdersDTO updateOrderItemQuantity(Integer orderId, Integer orderItemId, int newQuantity);
+    OrdersDTO removeItemFromOrder(Integer orderId, Integer orderItemId);
+
 }

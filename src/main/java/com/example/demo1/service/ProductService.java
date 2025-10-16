@@ -2,16 +2,19 @@ package com.example.demo1.service;
 
 import com.example.demo1.payload.CategoryDTO;
 import com.example.demo1.payload.ProductDTO;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
 public interface ProductService {
+    Page<ProductDTO> getAllProducts(int page, int size);
+    Page<ProductDTO> searchProductsByName(String productName, int page, int size);
+    Page<ProductDTO> getProductsByCategoryName(String categoryName, int page, int size);
+    Page<ProductDTO> getProductsByCategoryId(Integer categoryId, int page, int size);
+
+
     ProductDTO addProduct(ProductDTO product);
-    List<ProductDTO> getAllProducts();
     ProductDTO updateProduct(ProductDTO product);
     ProductDTO getProductById(Integer productId);
-    List<ProductDTO> searchProductsByName(String productName);
     void deleteProduct(Integer productId);
-    List<ProductDTO> getProductsByCategoryName(String categoryName);
-    List<ProductDTO> getProductsByCategoryId(Integer categoryId);
 }

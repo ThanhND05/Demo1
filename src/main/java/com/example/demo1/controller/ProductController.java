@@ -3,9 +3,9 @@ package com.example.demo1.controller;
 import com.example.demo1.payload.ProductDTO;
 import com.example.demo1.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/products")
@@ -19,8 +19,10 @@ public class ProductController {
     }
 
     @GetMapping
-    public List<ProductDTO> getAllProducts() {
-        return productService.getAllProducts();
+    public Page<ProductDTO> getAllProducts(
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size) {
+        return productService.getAllProducts(page, size);
     }
 
     @PutMapping
@@ -34,8 +36,11 @@ public class ProductController {
     }
 
     @GetMapping("/name/{productName}")
-    public List<ProductDTO> getProductByName(@PathVariable("productName") String productName) {
-        return productService.searchProductsByName(productName);
+    public Page<ProductDTO> getProductByName(
+            @PathVariable("productName") String productName,
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size) {
+        return productService.searchProductsByName(productName, page, size);
     }
 
     @DeleteMapping("/{productId}")
@@ -44,12 +49,18 @@ public class ProductController {
     }
 
     @GetMapping("/categories/name/{categoryName}")
-    public List<ProductDTO> getProductsByCategoryName(@PathVariable("categoryName") String categoryName) {
-        return productService.getProductsByCategoryName(categoryName);
+    public Page<ProductDTO> getProductsByCategoryName(
+            @PathVariable("categoryName") String categoryName,
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size) {
+        return productService.getProductsByCategoryName(categoryName, page, size);
     }
 
     @GetMapping("/categories/id/{categoryId}")
-    public List<ProductDTO> getProductsByCategoryId(@PathVariable("categoryId") Integer categoryId) {
-        return productService.getProductsByCategoryId(categoryId);
+    public Page<ProductDTO> getProductsByCategoryId(
+            @PathVariable("categoryId") Integer categoryId,
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size) {
+        return productService.getProductsByCategoryId(categoryId, page, size);
     }
 }

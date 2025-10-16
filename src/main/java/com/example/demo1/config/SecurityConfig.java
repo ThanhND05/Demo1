@@ -60,6 +60,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/user/**").hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/api/carts/**", "/api/cartitems/**").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers("/api/orders/**", "/api/orderItems/**", "/api/payments/**").hasAnyRole("USER", "ADMIN")
                         .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider())

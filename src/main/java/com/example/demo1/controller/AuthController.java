@@ -80,10 +80,19 @@ public class AuthController {
         user.setPhone(signUpDto.getPhone());
         user.setAddress(signUpDto.getAddress());
 
-        Role role = roleRepository.findByRoleName("ROLE_USER");
+        String roleName;
+        if (userRepository.count() == 0) {
+            // Người dùng đầu tiên sẽ là ADMIN
+            roleName = "ROLE_ADMIN";
+        } else {
+            // Những người dùng sau sẽ là USER
+            roleName = "ROLE_USER";
+        }
+
+        Role role = roleRepository.findByRoleName(roleName);
         if (role == null) {
             // Create a default role when "ROLE_ADMIN" is not found
-            role = new Role("ROLE_USER");
+            role = new Role(roleName);
             roleRepository.save(role);
         }
 
