@@ -35,11 +35,24 @@ public class OrderItems {
 
     @Column(precision = 10, scale = 2)
     private BigDecimal price;
+    @Column(precision = 10, scale = 2)
     private BigDecimal subTotal;
-    
+
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
+        calculateSubTotal();
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+        calculateSubTotal();
+    }
+
     public void calculateSubTotal() {
-        if (price != null && quantity != null) {
-            this.subTotal = price.multiply(BigDecimal.valueOf(quantity));
+        if (this.price != null && this.quantity != null && this.quantity > 0) {
+            this.subTotal = this.price.multiply(BigDecimal.valueOf(this.quantity));
+        } else {
+            this.subTotal = BigDecimal.ZERO;
         }
     }
 }

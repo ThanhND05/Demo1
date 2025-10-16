@@ -1,173 +1,164 @@
 package com.example.demo1.service.impl;
 
-import com.example.demo1.converter.OrderItemsConverter;
 import com.example.demo1.converter.OrdersConverter;
-import com.example.demo1.entity.Cart;
-import com.example.demo1.entity.CartItem;
-import com.example.demo1.entity.OrderItems;
-import com.example.demo1.entity.OrderStatus;
-import com.example.demo1.entity.Orders;
-import com.example.demo1.entity.User;
-import com.example.demo1.payload.OrderItemsDTO;
+import com.example.demo1.entity.*;
+import com.example.demo1.exception.ResourceNotFoundException;
 import com.example.demo1.payload.OrdersDTO;
-import com.example.demo1.payload.UserDTO;
-import com.example.demo1.repository.CartRepository;
-import com.example.demo1.repository.OrdersRepository;
-import com.example.demo1.repository.UserRepository;
+import com.example.demo1.repository.*;
 import com.example.demo1.service.OrdersService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class OrdersServiceImpl implements OrdersService {
 
-    @Autowired
-    private OrdersRepository ordersRepository;
+    @Autowired private OrdersRepository ordersRepository;
+    @Autowired private UserRepository userRepository;
+    @Autowired private CartRepository cartRepository;
+    @Autowired private ProductRepository productRepository;
+    @Autowired private OrdersConverter ordersConverter;
 
-    @Autowired
-    private UserRepository userRepository;
-    
-    @Autowired
-    private CartRepository cartRepository;
-    
-    @Autowired
-    private OrdersConverter ordersConverter;
-    @Autowired
-    private OrderItemsConverter orderItemsConverter;
-    
     @Override
-    public List<OrdersDTO> findAll() {
-        return ordersRepository.findAll().stream().map(this::toDTO).collect(Collectors.toList());
-    }
-    
-    private OrdersDTO toDTO(Orders savedOrder){
-        //Tạo toDTO thủ công
-        OrdersDTO dto = new OrdersDTO();
-        dto.setOrderId(savedOrder.getOrderId());
-        dto.setOrderDate(savedOrder.getOrderDate());
-        dto.setStatus(savedOrder.getStatus());
-        dto.setTotalAmount(savedOrder.getTotalAmount());
-        dto.setShippingAddress(savedOrder.getShippingAddress());
-
-        if (savedOrder.getUser() != null) {
-            UserDTO userDTO = new UserDTO();
-            userDTO.setUserId(savedOrder.getUser().getUserId());
-            userDTO.setAddress(savedOrder.getUser().getAddress());
-            userDTO.setName(savedOrder.getUser().getName());
-            userDTO.setEmail(savedOrder.getUser().getEmail());
-            userDTO.setPhone(savedOrder.getUser().getPhone());
-            dto.setUser(userDTO);
-        }
-        Set<OrderItemsDTO> itemDTOs = new HashSet<>();
-        if (savedOrder.getOrderItems() != null) {
-            for (OrderItems item : savedOrder.getOrderItems()) {
-                OrderItemsDTO itemDTO = orderItemsConverter.toDTO(item);
-                itemDTOs.add(itemDTO);
-            }
-            dto.setOrderItems(itemDTOs);
-        }
-        return dto;
-    }
-    
-    @Override
-    public OrdersDTO createOrder(Integer userId, OrdersDTO orderDTO) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found!"));
+    public OrdersDTO createOrderFromCart(Integer userId, String shippingAddress) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found!"));
         Cart cart = cartRepository.findByUser(user);
         if (cart == null || cart.getItems().isEmpty()) {
             throw new RuntimeException("Cart is empty!");
         }
 
-        Orders order = ordersConverter.toEntity(orderDTO);
-        if (orderDTO.getShippingAddress() == null || orderDTO.getShippingAddress().trim().isEmpty()) {
-            throw new RuntimeException("Shipping address is required");
-        }
+        Orders order = new Orders();
         order.setUser(user);
-        order.setOrderDate(LocalDateTime.now());
         order.setStatus(OrderStatus.PENDING);
-        
-        BigDecimal totalPrice = BigDecimal.ZERO;
-        order.setTotalAmount(totalPrice);
-        
-        //Lấy hàng trong cart
-        Set<CartItem> cartItems = cart.getItems();
-        Set<OrderItems> orderItems = new HashSet<>();
-        
-        for (CartItem c : cartItems) {
-            OrderItems item = new OrderItems();
-            item.setProduct(c.getProduct());
-            item.setPrice(c.getProduct().getPrice());
-            item.setQuantity(c.getQuantity());
-            item.setOrder(order);
-            item.calculateSubTotal();
-            orderItems.add(item);
+        order.setShippingAddress(shippingAddress);
+
+        for (CartItem cartItem : cart.getItems()) {
+            OrderItems orderItem = new OrderItems();
+            orderItem.setProduct(cartItem.getProduct());
+            orderItem.setQuantity(cartItem.getQuantity());
+            orderItem.setPrice(cartItem.getProduct().getPrice());
+            order.addItem(orderItem);
         }
-        //Xoá giỏ hàng đã đặt
+
+        // Entity sẽ tự tính tổng tiền nhờ @PrePersist/@PreUpdate
+        Orders savedOrder = ordersRepository.save(order);
+
+        // Xóa giỏ hàng sau khi tạo đơn hàng thành công
         cart.getItems().clear();
         cartRepository.save(cart);
-        order.setOrderItems(orderItems);
-        order.calculateTotalAmount();
-        Orders savedOrder = ordersRepository.save(order);
-        return toDTO(savedOrder);
+
+        return ordersConverter.toDTO(savedOrder);
     }
 
     @Override
     public OrdersDTO getOrderById(Integer orderId) {
-        Orders order = ordersRepository.findById(orderId)
-            .orElseThrow(() -> new RuntimeException("Order not found!"));
-        return toDTO(order);
+        Orders order = ordersRepository.findById(orderId).orElseThrow(() -> new RuntimeException("Order not found!"));
+        return ordersConverter.toDTO(order);
     }
-
     @Override
-    public List<OrdersDTO> getOrdersByUserId(Integer userId) {
-        if (!userRepository.existsById(userId)) throw new RuntimeException("User not found!");
-        List<Orders> ordersList = ordersRepository.findByUser_UserId(userId);
-        return ordersList.stream().map(this::toDTO).collect(Collectors.toList());
-    }
-
-    @Override
-    public OrdersDTO updateOrder(Integer orderId, OrdersDTO orderDTO) {
-        Orders order = ordersRepository.findById(orderId)
-                .orElseThrow(() -> new RuntimeException("Order not found!"));
-        if (order.getStatus() == OrderStatus.SHIPPING || order.getStatus() == OrderStatus.COMPLETED) {
-            throw new RuntimeException("Cannot update order because it has already been shipped or completed!");
+    public Page<OrdersDTO> getOrdersByUserId(Integer userId, int page, int size) {
+        if (!userRepository.existsById(userId)) {
+            throw new ResourceNotFoundException("User", "id", userId);
         }
-        order.setShippingAddress(orderDTO.getShippingAddress());
-        Orders updatedOrder = ordersRepository.save(order);
-        return toDTO(updatedOrder);
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        Page<Orders> ordersPage = ordersRepository.findByUser_UserId(userId, pageable);
+        return ordersPage.map(ordersConverter::toDTO);
+    }
+
+    @Override
+    public OrdersDTO updateOrderStatus(Integer orderId, OrderStatus status) {
+        Orders order = ordersRepository.findById(orderId).orElseThrow(() -> new RuntimeException("Order not found!"));
+        order.setStatus(status);
+        // Không cần gọi save() tường minh nếu phương thức được bao bởi @Transactional
+        return ordersConverter.toDTO(order);
     }
     @Override
-    public OrdersDTO updateOrderStatus(Integer orderId, OrdersDTO orderDTO){
-        Orders order = ordersRepository.findById(orderId)
-                .orElseThrow(() -> new RuntimeException("Order not found!"));
-        order.setStatus(orderDTO.getStatus());
-        Orders updatedOrder = ordersRepository.save(order);
-        return toDTO(updatedOrder);
-    }
-    @Override
-    public OrdersDTO cancelOrder(Integer orderId) {
+    public OrdersDTO cancelOrder(Integer orderId, Integer userId) {
         Orders order = ordersRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found!"));
 
-        if (order.getStatus() == OrderStatus.SHIPPING || order.getStatus() == OrderStatus.COMPLETED) {
-            throw new RuntimeException("Cannot cancel order because it has already been shipped or completed!");
+        // KIỂM TRA BẢO MẬT: Đảm bảo người dùng chỉ hủy đơn hàng của mình
+        if (!order.getUser().getUserId().equals(userId)) {
+            throw new SecurityException("User is not authorized to cancel this order.");
         }
+
+        // KIỂM TRA LOGIC NGHIỆP VỤ: Chỉ hủy được đơn hàng đang chờ hoặc đang xử lý
+        if (order.getStatus() == OrderStatus.SHIPPING || order.getStatus() == OrderStatus.COMPLETED) {
+            throw new IllegalStateException("Cannot cancel an order that is already shipping or completed.");
+        }
+
+        // Cập nhật trạng thái
         order.setStatus(OrderStatus.CANCELLED);
-        Orders cancelledOrder = ordersRepository.save(order);
-        return toDTO(cancelledOrder);
+
+        // @Transactional sẽ tự động lưu thay đổi khi kết thúc phương thức
+        return ordersConverter.toDTO(order);
     }
     @Override
     public void deleteOrder(Integer orderId) {
-        if (!ordersRepository.existsById(orderId))   throw new RuntimeException("Order not found!");
+        if (!ordersRepository.existsById(orderId)) {
+            throw new RuntimeException("Order not found!");
+        }
         ordersRepository.deleteById(orderId);
+    }
+
+    @Override
+    public OrdersDTO addItemToOrder(Integer orderId, Integer productId, int quantity) {
+        Orders order = ordersRepository.findById(orderId).orElseThrow(() -> new RuntimeException("Order not found!"));
+        Product product = productRepository.findById(productId).orElseThrow(() -> new RuntimeException("Product not found!"));
+
+        if (order.getStatus() != OrderStatus.PENDING) {
+            throw new RuntimeException("Cannot modify an order that is not in PENDING state.");
+        }
+
+        OrderItems newItem = new OrderItems();
+        newItem.setProduct(product);
+        newItem.setQuantity(quantity);
+        newItem.setPrice(product.getPrice());
+
+        order.addItem(newItem);
+        Orders updatedOrder = ordersRepository.save(order);
+        // JPA sẽ tự động lưu order và tính lại tổng tiền
+        return ordersConverter.toDTO(updatedOrder);
+    }
+
+    @Override
+    public OrdersDTO updateOrderItemQuantity(Integer orderId, Integer orderItemId, int newQuantity) {
+        Orders order = ordersRepository.findById(orderId).orElseThrow(() -> new RuntimeException("Order not found!"));
+        if (order.getStatus() != OrderStatus.PENDING) {
+            throw new RuntimeException("Cannot modify an order that is not in PENDING state.");
+        }
+
+        OrderItems itemToUpdate = order.getOrderItems().stream()
+                .filter(item -> item.getOrderItemId().equals(orderItemId))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Item not found in this order."));
+
+        itemToUpdate.setQuantity(newQuantity);
+        order.calculateTotalAmount();
+        Orders updatedOrder = ordersRepository.save(order);
+        // JPA sẽ tự động cập nhật item và tính lại tổng tiền của order
+        return ordersConverter.toDTO(updatedOrder);
+    }
+
+    @Override
+    public OrdersDTO removeItemFromOrder(Integer orderId, Integer orderItemId) {
+        Orders order = ordersRepository.findById(orderId).orElseThrow(() -> new RuntimeException("Order not found!"));
+        if (order.getStatus() != OrderStatus.PENDING) {
+            throw new RuntimeException("Cannot modify an order that is not in PENDING state.");
+        }
+
+        OrderItems itemToRemove = order.getOrderItems().stream()
+                .filter(item -> item.getOrderItemId().equals(orderItemId))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Item not found in this order."));
+
+        Orders updatedOrder = ordersRepository.save(order);
+        return ordersConverter.toDTO(updatedOrder);
     }
 }

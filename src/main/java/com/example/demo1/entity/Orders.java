@@ -9,6 +9,7 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -27,9 +28,9 @@ public class Orders {
     @JsonIgnore
     private User user;
     
-    @OneToMany(mappedBy = "order" , cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "order" , cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
-    private Set<OrderItems> orderItems;
+    private Set<OrderItems> orderItems = new HashSet<>();
 
     private LocalDateTime orderDate = LocalDateTime.now();
 
@@ -48,5 +49,21 @@ public class Orders {
         } else {
             this.totalAmount = BigDecimal.ZERO;
         }
+    }
+    public void addItem(OrderItems item) {
+        orderItems.add(item);
+        item.setOrder(this); // Thiết lập quan hệ hai chiều
+        calculateTotalAmount();
+    }
+
+    public void removeItem(OrderItems item) {
+        orderItems.remove(item);
+        item.setOrder(null);
+        calculateTotalAmount();
+    }
+    @PrePersist
+    @PreUpdate
+    public void onSaveOrUpdate() {
+        calculateTotalAmount();
     }
 }

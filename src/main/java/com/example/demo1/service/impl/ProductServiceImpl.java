@@ -7,6 +7,9 @@ import com.example.demo1.payload.ProductDTO;
 import com.example.demo1.repository.ProductRepository;
 import com.example.demo1.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -32,13 +35,10 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductDTO> getAllProducts() {
-        List<Product> entities =  productRepository.findAll();
-        List<ProductDTO> dto= new ArrayList<>();
-        for(Product productEntity : entities){
-            dto.add(productConverter.toDTO(productEntity));
-        }
-        return dto;
+    public Page<ProductDTO> getAllProducts(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Product> productPage = productRepository.findAll(pageable);
+        return productPage.map(productConverter::toDTO);
     }
 
     @Override
@@ -70,26 +70,23 @@ public class ProductServiceImpl implements ProductService {
         productRepository.delete(existing);
     }
     @Override
-    public List<ProductDTO> searchProductsByName(String productName) {
-        List<Product> entities = productRepository.findByProductNameContainingIgnoreCase(productName);
-        return entities.stream()
-                .map(productConverter::toDTO)
-                .collect(Collectors.toList());
+    public Page<ProductDTO> searchProductsByName(String productName, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Product> productPage = productRepository.findByProductNameContainingIgnoreCase(productName, pageable);
+        return productPage.map(productConverter::toDTO);
     }
 
     @Override
-    public List<ProductDTO> getProductsByCategoryName(String categoryName){
-        List<Product> products = productRepository.findByCategory_CategoryNameIgnoreCase(categoryName);
-        return products.stream()
-                .map(productConverter::toDTO)
-                .collect(Collectors.toList());
+    public Page<ProductDTO> getProductsByCategoryName(String categoryName, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Product> productPage = productRepository.findByCategory_CategoryNameIgnoreCase(categoryName, pageable);
+        return productPage.map(productConverter::toDTO);
     }
 
     @Override
-    public List<ProductDTO> getProductsByCategoryId(Integer categoryId){
-        List<Product> products = productRepository.findByCategory_CategoryId(categoryId);
-        return products.stream()
-                .map(productConverter::toDTO)
-                .collect(Collectors.toList());
+    public Page<ProductDTO> getProductsByCategoryId(Integer categoryId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Product> productPage = productRepository.findByCategory_CategoryId(categoryId, pageable);
+        return productPage.map(productConverter::toDTO);
     }
 }
