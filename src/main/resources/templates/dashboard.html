@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bảng điều khiển - Shop Quần Áo</title>
+  <link th:href="@{/css/main.css}" rel="stylesheet">
+  <script th:src="@{/js/dashboard.js}" defer></script>
+</head>
+<body>
+  <!-- Thanh điều hướng -->
+  <header class="navbar">
+    <div class="logo">
+      <h2>🛍️ Shop Quần Áo</h2>
+    </div>
+    <nav>
+      <ul>
+        <li><a th:href="@{/products}">Sản phẩm</a></li>
+        <li><a th:href="@{/orders}">Đơn hàng</a></li>
+        <li><a th:href="@{/profile}">Hồ sơ</a></li>
+        <li><button id="logoutBtn" class="logout-btn">Đăng xuất</button></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Khu vực nội dung -->
+  <main class="dashboard-container">
+    <section class="user-info">
+      <h3>Xin chào, <span id="userName">Người dùng</span> 👋</h3>
+      <p>Email: <span id="userEmail">email@example.com</span></p>
+    </section>
+
+    <section class="product-section">
+      <h3>Danh sách sản phẩm nổi bật</h3>
+      <div id="productList" class="product-grid">
+        <!-- Các sản phẩm sẽ được render bằng JS -->
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>© 2025 Shop Quần Áo | Thiết kế bởi bạn 😄</p>
+  </footer>
+</body>
+</html>

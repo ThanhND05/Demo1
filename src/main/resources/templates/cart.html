@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Google Material Icons -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk&display=swap" rel="stylesheet">
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fleur+De+Leah&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bowlby+One+SC&family=Fleur+De+Leah&family=Nosifer&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bowlby+One+SC&family=Fleur+De+Leah&family=Mystery+Quest&family=Nosifer&family=Rubik+Moonrocks&display=swap" rel="stylesheet">
+
+  <!-- CSS -->
+  <link th:href="@{/css/main.css}" rel="stylesheet">
+  <link th:href="@{/css/cart.css}" rel="stylesheet">
+
+  <link rel="icon" th:href="@{/image/icon.png}">
+  <title>Giỏ hàng - Lyn Shop</title>
+</head>
+
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="menu">
+      <div class="logo">
+        <a th:href="@{/}" style="color:black;">LYN</a>
+      </div>
+      <nav class="menu_list">
+        <a th:href="@{/}" style="font-size: 30px; font-weight:bold;"><i class='bx bx-home'></i> Home</a>
+        <a th:href="@{/product}"><i class='bx bx-shopping-bag'></i> Sản phẩm</a>
+        <a th:href="@{/cart}"><i class='bx bx-cart-alt'></i> Giỏ hàng</a>
+
+        <div id="userMenu">
+          <a id="loginLink" th:href="@{/login}" style="font-size: 30px;"><i class='bx bx-user'></i></a>
+          <div id="dropdownMenu" class="dropdown hidden">
+            <a href="#" id="logoutBtn">Đăng xuất</a>
+          </div>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Banner -->
+  <img class="banner" th:src="@{/image/banner/banner_home.webp}" alt="Cart Banner">
+
+  <!-- Giỏ hàng -->
+  <section class="cart_container">
+    <h2 class="title_cart">Giỏ hàng của bạn</h2>
+
+    <table class="cart_table">
+      <thead>
+        <tr>
+          <th>Sản phẩm</th>
+          <th>Hình ảnh</th>
+          <th>Số lượng</th>
+          <th>Giá</th>
+          <th>Thành tiền</th>
+          <th>Xóa</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Danh sách cart động -->
+        <tr th:each="item : ${cartItems}">
+          <td th:text="${item.name}"></td>
+          <td><img th:src="@{${item.imageUrl}}" width="80"></td>
+          <td><input type="number" th:value="${item.quantity}" min="1"></td>
+          <td th:text="${item.price} + 'đ'"></td>
+          <td th:text="${item.price * item.quantity} + 'đ'"></td>
+          <td><i class='bx bx-trash' th:onclick="'removeFromCart(' + ${item.id} + ')'"></i></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="cart_total">
+      <h3>Tổng cộng: <span>1.200.000đ</span></h3>
+      <a th:href="@{/checkout}" class="checkout_btn">Thanh toán</a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <section class="contact_container">
+    <div class="logo2" style="color:white">
+      <h1>LYN</h1>
+    </div>
+    <div class="contact">
+      <div class="fb-in">
+        <h6>FOLLOW US</h6>
+        <a href="https://web.facebook.com/le.duy.hungg.2025" target="_blank"><i class='bx bxl-facebook-circle'></i></a>
+        <a href="https://www.instagram.com/ldhung_1401/" target="_blank"><i class='bx bxl-instagram'></i></a>
+        <a href="https://www.youtube.com/@duyhung8919" target="_blank"><i class='bx bxl-youtube'></i></a>
+        <a><i class='bx bxl-twitter'></i></a>
+        <a><i class='bx bxl-tiktok'></i></a>
+      </div>
+
+      <div class="mail">
+        <h6>CONTACT</h6>
+        <p><i class='bx bx-envelope'></i> hungleduy278@gmail.com</p>
+        <p><i class='bx bx-phone-call'></i> 0917947492</p>
+      </div>
+
+      <div class="support">
+        <h6>SUPPORT</h6>
+        <p>Cách thức mua hàng</p>
+        <p>Chính sách bảo mật</p>
+        <p>Chính sách bảo hành và đổi trả</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- JS -->
+  <script th:src="@{/js/cart.js}"></script>
+  <script th:src="@{/js/auth.js}"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", renderCart);
+  </script>
+
+</body>
+</html>
