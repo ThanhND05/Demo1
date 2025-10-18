@@ -2,38 +2,56 @@ package com.example.demo1.controller;
 
 import com.example.demo1.entity.User;
 import com.example.demo1.repository.UserRepository;
-import com.example.demo1.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
-@RequestMapping("/api/user")
+@Controller
+@RequestMapping("/user")
 @PreAuthorize("hasAnyRole('USER','ADMIN')")
 public class UserController {
+
     @Autowired
     private UserRepository userRepository;
 
+    // --- Hiển thị trang thông tin người dùng hiện tại ---
     @GetMapping("/me")
-    public ResponseEntity<User> getCurrentUser(Authentication authentication) {
+    public String getCurrentUser(Authentication authentication, Model model) {
         String email = authentication.getName();
         User user = userRepository.findByEmail(email);
-        return ResponseEntity.ok(user);
+        model.addAttribute("user", user);
+        return "user/profile"; // templates/user/profile.html
     }
 
-    @PutMapping("/me")
-    public ResponseEntity<User> updateProfile(Authentication authentication, @RequestBody User updateUser) {
+    // --- Hiển thị form cập nhật thông tin cá nhân ---
+    @GetMapping("/me/edit")
+    public String showEditProfileForm(Authentication authentication, Model model) {
         String email = authentication.getName();
         User user = userRepository.findByEmail(email);
-        if(user!=null){
+        model.addAttribute("user", user);
+        return "user/edit"; // templates/user/edit.html
+    }
+
+    // --- Xử lý cập nhật thông tin cá nhân ---
+    @PostMapping("/me")
+    public String updateProfile(Authentication authentication, @ModelAttribute("user") User updateUser, Model model) {
+        String email = authentication.getName();
+        User user = userRepository.findByEmail(email);
+
+        if (user != null) {
             user.setName(updateUser.getName());
             user.setPhone(updateUser.getPhone());
             user.setAddress(updateUser.getAddress());
             userRepository.save(user);
-            return ResponseEntity.ok(user);
+            model.addAttribute("success", "Cập nhật thông tin thành công!");
+        } else {
+            model.addAttribute("error", "Không tìm thấy người dùng!");
         }
-        return ResponseEntity.notFound().build();
+
+        model.addAttribute("user", user);
+        return "user/profile"; // sau khi cập nhật, quay lại trang profile
     }
 }
