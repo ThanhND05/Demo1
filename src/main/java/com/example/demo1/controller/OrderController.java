@@ -5,88 +5,100 @@ import com.example.demo1.payload.OrdersDTO;
 import com.example.demo1.service.OrdersService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 import java.util.Map;
 
-@RestController
-@RequestMapping("/api/orders")
+@Controller
+@RequestMapping("/orders")
 public class OrderController {
 
     @Autowired
     private OrdersService ordersService;
 
-    // Tạo đơn hàng từ giỏ hàng của người dùng
-    @PostMapping("/user/{userId}")
-    public ResponseEntity<OrdersDTO> createOrderFromCart(@PathVariable Integer userId, @RequestBody Map<String, String> payload) {
-        String shippingAddress = payload.get("shippingAddress");
-        return ResponseEntity.ok(ordersService.createOrderFromCart(userId, shippingAddress));
-    }
-
-    // Lấy thông tin đơn hàng theo ID
-    @GetMapping("/{orderId}")
-    public ResponseEntity<OrdersDTO> getOrderById(@PathVariable Integer orderId) {
-        return ResponseEntity.ok(ordersService.getOrderById(orderId));
-    }
-
-    // Lấy tất cả đơn hàng của một người dùng
+    // ----- HIỂN THỊ DANH SÁCH ĐƠN HÀNG CỦA NGƯỜI DÙNG -----
     @GetMapping("/user/{userId}")
-    public ResponseEntity<Page<OrdersDTO>> getOrdersByUserId(
+    public String getOrdersByUserId(
             @PathVariable Integer userId,
             @RequestParam(name = "page", defaultValue = "0") int page,
-            @RequestParam(name = "size", defaultValue = "10") int size) {
+            @RequestParam(name = "size", defaultValue = "10") int size,
+            Model model) {
 
-        return ResponseEntity.ok(ordersService.getOrdersByUserId(userId, page, size));
+        Page<OrdersDTO> ordersPage = ordersService.getOrdersByUserId(userId, page, size);
+        model.addAttribute("ordersPage", ordersPage);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("userId", userId);
+        return "orders/list"; // templates/orders/list.html
     }
 
-    // Cập nhật trạng thái đơn hàng (chỉ dành cho ADMIN)
-    @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping("/{orderId}/status")
-    public ResponseEntity<OrdersDTO> updateOrderStatus(@PathVariable Integer orderId, @RequestBody Map<String, String> payload) {
-        OrderStatus status = OrderStatus.valueOf(payload.get("status").toUpperCase());
-        return ResponseEntity.ok(ordersService.updateOrderStatus(orderId, status));
+    // ----- HIỂN THỊ CHI TIẾT ĐƠN HÀNG -----
+    @GetMapping("/{orderId}")
+    public String getOrderById(@PathVariable Integer orderId, Model model) {
+        OrdersDTO order = ordersService.getOrderById(orderId);
+        model.addAttribute("order", order);
+        return "orders/detail"; // templates/orders/detail.html
     }
-    @PutMapping("/user/{userId}/orders/{orderId}/cancel")
-    public ResponseEntity<OrdersDTO> cancelOrder(
-            @PathVariable Integer userId,
-            @PathVariable Integer orderId) {
 
-        OrdersDTO cancelledOrder = ordersService.cancelOrder(orderId, userId);
-        return ResponseEntity.ok(cancelledOrder);
+    // ----- TẠO ĐƠN HÀNG TỪ GIỎ HÀNG -----
+    @GetMapping("/user/{userId}/create")
+    public String showCreateOrderForm(@PathVariable Integer userId, Model model) {
+        model.addAttribute("userId", userId);
+        return "orders/create"; // templates/orders/create.html
     }
-    // Xóa đơn hàng
-    @PreAuthorize("hasRole('ADMIN')")
-    @DeleteMapping("/{orderId}")
-    public ResponseEntity<String> deleteOrder(@PathVariable Integer orderId) {
+
+    @PostMapping("/user/{userId}")
+    public String createOrderFromCart(@PathVariable Integer userId, @RequestParam String shippingAddress) {
+        ordersService.createOrderFromCart(userId, shippingAddress);
+        return "redirect:/orders/user/" + userId;
+    }
+
+    // ----- CẬP NHẬT TRẠNG THÁI ĐƠN HÀNG -----
+    @PostMapping("/{orderId}/status")
+    public String updateOrderStatus(@PathVariable Integer orderId, @RequestParam String status) {
+        OrderStatus newStatus = OrderStatus.valueOf(status.toUpperCase());
+        ordersService.updateOrderStatus(orderId, newStatus);
+        return "redirect:/orders/" + orderId;
+    }
+
+    // ----- HỦY ĐƠN HÀNG (USER) -----
+    @PostMapping("/user/{userId}/orders/{orderId}/cancel")
+    public String cancelOrder(@PathVariable Integer userId, @PathVariable Integer orderId) {
+        ordersService.cancelOrder(orderId, userId);
+        return "redirect:/orders/user/" + userId;
+    }
+
+    // ----- XOÁ ĐƠN HÀNG (ADMIN) -----
+    @GetMapping("/delete/{orderId}")
+    public String deleteOrder(@PathVariable Integer orderId) {
         ordersService.deleteOrder(orderId);
-        return ResponseEntity.ok("Order deleted successfully!");
+        return "redirect:/orders";
     }
 
-    // --- API để quản lý các mục hàng (items) trong một đơn hàng ---
-
-    // Thêm một sản phẩm vào đơn hàng đang chờ xử lý
+    // ----- THÊM SẢN PHẨM VÀO ĐƠN HÀNG -----
     @PostMapping("/{orderId}/items")
-    public ResponseEntity<OrdersDTO> addItemToOrder(@PathVariable Integer orderId, @RequestBody Map<String, Integer> payload) {
-        Integer productId = payload.get("productId");
-        Integer quantity = payload.get("quantity");
-        return ResponseEntity.ok(ordersService.addItemToOrder(orderId, productId, quantity));
+    public String addItemToOrder(@PathVariable Integer orderId,
+                                 @RequestParam Integer productId,
+                                 @RequestParam Integer quantity) {
+        ordersService.addItemToOrder(orderId, productId, quantity);
+        return "redirect:/orders/" + orderId;
     }
 
-    // Cập nhật số lượng của một mục hàng trong đơn hàng
-    @PutMapping("/{orderId}/items/{itemId}")
-    public ResponseEntity<OrdersDTO> updateOrderItemQuantity(
-            @PathVariable Integer orderId,
-            @PathVariable Integer itemId,
-            @RequestBody Map<String, Integer> payload) {
-        Integer newQuantity = payload.get("quantity");
-        return ResponseEntity.ok(ordersService.updateOrderItemQuantity(orderId, itemId, newQuantity));
+    // ----- CẬP NHẬT SỐ LƯỢNG MỤC HÀNG -----
+    @PostMapping("/{orderId}/items/{itemId}/update")
+    public String updateOrderItemQuantity(@PathVariable Integer orderId,
+                                          @PathVariable Integer itemId,
+                                          @RequestParam Integer quantity) {
+        ordersService.updateOrderItemQuantity(orderId, itemId, quantity);
+        return "redirect:/orders/" + orderId;
     }
 
-    // Xóa một mục hàng khỏi đơn hàng
-    @DeleteMapping("/{orderId}/items/{itemId}")
-    public ResponseEntity<OrdersDTO> deleteOrderItem(@PathVariable Integer orderId, @PathVariable Integer itemId) {
-        return ResponseEntity.ok(ordersService.removeItemFromOrder(orderId, itemId));
+    // ----- XOÁ MỘT MỤC HÀNG -----
+    @GetMapping("/{orderId}/items/{itemId}/delete")
+    public String deleteOrderItem(@PathVariable Integer orderId, @PathVariable Integer itemId) {
+        ordersService.removeItemFromOrder(orderId, itemId);
+        return "redirect:/orders/" + orderId;
     }
 }
