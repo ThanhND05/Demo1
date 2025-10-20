@@ -1,0 +1,121 @@
+<!-- templates/categories/list.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Danh sách danh mục</title>
+
+    <!-- CSS nội tuyến -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+            background-color: #f8f9fa;
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+        form {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        input[type="text"] {
+            padding: 6px;
+            width: 250px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button, a.btn {
+            background-color: #007bff;
+            color: white;
+            padding: 6px 12px;
+            border: none;
+            text-decoration: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover, a.btn:hover {
+            background-color: #0056b3;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .actions a {
+            margin: 0 5px;
+            color: #007bff;
+            text-decoration: none;
+        }
+        .actions a:hover {
+            text-decoration: underline;
+        }
+    </style>
+
+    <!-- JS xác nhận xóa -->
+    <script>
+        function confirmDelete(name) {
+            return confirm("Bạn có chắc chắn muốn xóa danh mục '" + name + "' không?");
+        }
+    </script>
+</head>
+
+<body>
+<h2>📂 Danh sách danh mục</h2>
+
+<!-- Form tìm kiếm -->
+<form th:action="@{/categories/search}" method="get">
+    <input type="text" name="name" placeholder="Nhập tên danh mục..." th:value="${searchKey}">
+    <button type="submit">🔍 Tìm kiếm</button>
+    <a th:href="@{/categories}" class="btn">🔄 Tải lại</a>
+</form>
+
+<!-- Nút thêm mới -->
+<div style="text-align: right; margin-bottom: 10px;">
+    <a th:href="@{/categories/new}" class="btn">➕ Thêm danh mục mới</a>
+</div>
+
+<!-- Bảng danh mục -->
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Tên danh mục</th>
+        <th>Mô tả</th>
+        <th>Hành động</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="category : ${categories}">
+        <td th:text="${category.id}"></td>
+        <td>
+            <a th:href="@{'/categories/' + ${category.id}}" th:text="${category.name}"></a>
+        </td>
+        <td th:text="${category.description}"></td>
+        <td class="actions">
+            <a th:href="@{'/categories/edit/' + ${category.id}}">✏️ Sửa</a>
+            <a th:href="@{'/categories/delete/' + ${category.id}}"
+               th:onclick="'return confirmDelete(\'' + ${category.name} + '\');'">🗑️ Xóa</a>
+        </td>
+    </tr>
+    <tr th:if="${#lists.isEmpty(categories)}">
+        <td colspan="4" style="text-align: center; color: gray;">Không có danh mục nào.</td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

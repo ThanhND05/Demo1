@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Chi tiết giỏ hàng</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f4f6f8;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background: #4a5568;
+            color: white;
+            padding: 16px;
+            text-align: center;
+            font-size: 22px;
+        }
+
+        .container {
+            max-width: 950px;
+            margin: 30px auto;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            padding: 24px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border-bottom: 1px solid #ddd;
+            padding: 12px;
+        }
+
+        th {
+            background-color: #edf2f7;
+        }
+
+        .actions a {
+            text-decoration: none;
+            color: white;
+            padding: 6px 10px;
+            border-radius: 5px;
+            margin-right: 5px;
+            font-size: 14px;
+        }
+
+        .edit-btn {
+            background-color: #3182ce;
+        }
+
+        .delete-btn {
+            background-color: #e53e3e;
+        }
+
+        .add-form {
+            margin-top: 20px;
+            padding-top: 10px;
+            border-top: 1px solid #ccc;
+        }
+
+        input, select {
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            margin-right: 10px;
+        }
+
+        button {
+            padding: 8px 14px;
+            background-color: #38a169;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #2f855a;
+        }
+    </style>
+</head>
+<body>
+
+<header>🧾 Chi tiết giỏ hàng</header>
+
+<div class="container">
+    <table>
+        <thead>
+            <tr>
+                <th>ID sản phẩm</th>
+                <th>Tên sản phẩm</th>
+                <th>Giá</th>
+                <th>Số lượng</th>
+                <th>Thành tiền</th>
+                <th>Hành động</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="item : ${items}">
+                <td th:text="${item.productId}"></td>
+                <td th:text="${item.name}"></td>
+                <td th:text="${#numbers.formatDecimal(item.price, 0, 'POINT', 0, 'COMMA')} + ' ₫'"></td>
+                <td th:text="

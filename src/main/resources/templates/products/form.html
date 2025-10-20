@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Thêm / Sửa sản phẩm</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      margin: 0;
+    }
+    .form-container {
+      width: 40%;
+      margin: 40px auto;
+      background: white;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #ccc;
+    }
+    h2 {
+      text-align: center;
+      color: #007bff;
+    }
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 10px;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      margin-top: 5px;
+    }
+    button {
+      margin-top: 15px;
+      background-color: #007bff;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <h2 th:text="${product != null} ? 'Cập nhật sản phẩm' : 'Thêm sản phẩm mới'"></h2>
+    <form th:action="${product != null} ? '/products/update' : '/products'" method="post">
+      <input type="hidden" name="id" th:value="${product.id}">
+      <label>Tên sản phẩm</label>
+      <input type="text" name="name" th:value="${product.name}" required>
+
+      <label>Giá</label>
+      <input type="number" name="price" th:value="${product.price}" required>
+
+      <label>Mô tả</label>
+      <textarea name="description" rows="4" th:text="${product.description}"></textarea>
+
+      <label>Danh mục ID</label>
+      <input type="number" name="categoryId" th:value="${product.categoryId}" required>
+
+      <button type="submit">💾 Lưu</button>
+      <a href="/products" style="margin-left:10px;">Hủy</a>
+    </form>
+  </div>
+</body>
+</html>

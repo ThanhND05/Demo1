@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản lý người dùng</title>
+    <style>
+        body {
+            font-family: "Segoe UI", sans-serif;
+            background: #f5f6fa;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            color: #2c3e50;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: #fff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        th, td {
+            border-bottom: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background: #3498db;
+            color: white;
+        }
+        tr:hover {
+            background: #ecf0f1;
+        }
+        .delete-btn {
+            background: #e74c3c;
+            color: white;
+            padding: 6px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .delete-btn:hover {
+            background: #c0392b;
+        }
+        .pagination {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .pagination a {
+            color: #3498db;
+            padding: 8px 12px;
+            text-decoration: none;
+        }
+        .pagination a:hover {
+            background: #3498db;
+            color: white;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+<h1>Danh sách người dùng</h1>
+
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Tên đăng nhập</th>
+        <th>Email</th>
+        <th>Vai trò</th>
+        <th>Hành động</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="user : ${users.content}">
+        <td th:text="${user.id}"></td>
+        <td th:text="${user.name}"></td>
+        <td th:text="${user.email}"></td>
+        <td>
+            <span th:each="role : ${user.roles}" th:text="${role.roleName}" th:append="' '"></span>
+        </td>
+        <td>
+            <a th:href="@{'/admin/users/' + ${user.id} + '/delete'}" class="delete-btn"
+               onclick="return confirm('Bạn có chắc chắn muốn xóa người dùng này không?');">
+                Xóa
+            </a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<!-- Phân trang -->
+<div class="pagination">
+    <a th:if="${users.hasPrevious()}" th:href="@{/admin/users(page=${users.number - 1})}">&laquo; Trước</a>
+    <span>Trang <span th:text="${users.number + 1}"></span> / <span th:text="${users.totalPages}"></span></span>
+    <a th:if="${users.hasNext()}" th:href="@{/admin/users(page=${users.number + 1})}">Sau &raquo;</a>
+</div>
+
+</body>
+</html>

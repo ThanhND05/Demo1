@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Chi tiết đơn hàng</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f9f9f9;
+      padding: 30px;
+    }
+    .container {
+      max-width: 800px;
+      margin: auto;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      padding: 20px;
+    }
+    h2 { color: #007bff; }
+    .info { margin-bottom: 20px; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: center;
+    }
+    th { background: #007bff; color: white; }
+    .btn {
+      display: inline-block;
+      padding: 8px 16px;
+      background: #007bff;
+      color: white;
+      border-radius: 5px;
+      text-decoration: none;
+    }
+    .btn:hover { background: #0056b3; }
+    .btn-danger { background: #dc3545; }
+  </style>
+  <script>
+    function confirmCancel(orderId, userId) {
+      if (confirm("Bạn có chắc muốn hủy đơn hàng này?")) {
+        document.getElementById("cancelForm").submit();
+      }
+    }
+  </script>
+</head>
+<body>
+<div class="container">
+  <h2>Chi tiết đơn hàng #<span th:text="${order.orderId}"></span></h2>
+  <div class="info">
+    <p><strong>Ngày tạo:</strong> <span th:text="${#temporals.format(order.createdAt, 'dd/MM/yyyy HH:mm')}"></span></p>
+    <p><strong>Trạng thái:</strong> <span th:text="${order.status}"></span></p>
+    <p><strong>Địa chỉ giao hàng:</strong> <span th:text="${order.shippingAddress}"></span></p>
+  </div>
+
+  <h3>Sản phẩm trong đơn hàng</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Tên sản phẩm</th>
+        <th>Số lượng</th>
+        <th>Giá</th>
+        <th>Tổng</th>
+        <th>Hành động</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr th:each="item : ${order.items}">
+        <td th:text="${item.product.name}"></td>
+        <td th:text="${item.quantity}"></td>
+        <td th:text="${#numbers.formatDecimal(item.price, 0, 'COMMA', 2, 'POINT')} + ' ₫'"></td>
+        <td th:text="${#numbers.formatDecimal(item.quantity * item.price, 0, 'COMMA', 2, 'POINT')} + ' ₫'"></td>
+        <td>
+          <a class="btn btn-danger"
+             th:href="@{'/orders/' + ${order.orderId} + '/items/' + ${item.itemId} + '/delete'}">Xóa</a>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p><strong>Tổng tiền:</strong> <span th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'COMMA', 2, 'POINT')} + ' ₫'"></span></p>
+
+  <form id="cancelForm" th:action="@{'/orders/user/' + ${order.user.userId} + '/orders/' + ${order.orderId} + '/cancel'}" method="post">
+    <button type="button" class="btn btn-danger" onclick="confirmCancel()">Hủy đơn</button>
+  </form>
+
+  <a class="btn" th:href="@{'/orders/user/' + ${order.user.userId}}">⬅ Quay lại danh sách</a>
+</div>
+</body>
+</html>

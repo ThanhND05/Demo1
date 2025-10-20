@@ -1,0 +1,88 @@
+<!-- templates/categories/form.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Thêm / Sửa danh mục</title>
+
+    <!-- CSS nội tuyến -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background-color: #f2f4f7;
+        }
+        form {
+            max-width: 500px;
+            margin: 0 auto;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button, a.btn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 4px;
+            text-decoration: none;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover, a.btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+
+    <!-- JS kiểm tra form -->
+    <script>
+        function validateForm() {
+            const name = document.getElementById('name').value.trim();
+            if (name === "") {
+                alert("Tên danh mục không được để trống!");
+                return false;
+            }
+            return true;
+        }
+    </script>
+</head>
+
+<body>
+<h2 th:text="${category.id != null ? '✏️ Chỉnh sửa danh mục' : '➕ Thêm danh mục mới'}"></h2>
+
+<form th:action="${category.id != null} ? @{/categories/update} : @{/categories}"
+      th:object="${category}" method="post" onsubmit="return validateForm()">
+
+    <input type="hidden" th:field="*{id}">
+
+    <label for="name">Tên danh mục:</label>
+    <input type="text" id="name" th:field="*{name}" placeholder="Nhập tên danh mục">
+
+    <label for="description">Mô tả:</label>
+    <textarea id="description" th:field="*{description}" rows="4"
+              placeholder="Nhập mô tả..."></textarea>
+
+    <div style="text-align: center; margin-top: 15px;">
+        <button type="submit">💾 Lưu</button>
+        <a th:href="@{/categories}" class="btn">↩️ Quay lại</a>
+    </div>
+</form>
+
+</body>
+</html>

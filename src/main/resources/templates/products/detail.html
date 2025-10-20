@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Chi tiết sản phẩm</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f6f8;
+      margin: 0;
+    }
+    .container {
+      width: 50%;
+      margin: 50px auto;
+      background: white;
+      border-radius: 10px;
+      padding: 25px;
+      box-shadow: 0 0 10px #ccc;
+    }
+    h2 {
+      text-align: center;
+      color: #007bff;
+    }
+    .info {
+      margin: 20px 0;
+    }
+    .info label {
+      font-weight: bold;
+    }
+    .btn {
+      padding: 8px 15px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      text-decoration: none;
+      margin-right: 8px;
+    }
+    .btn:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Chi tiết sản phẩm</h2>
+    <div class="info">
+      <p><label>ID:</label> <span th:text="${product.id}"></span></p>
+      <p><label>Tên:</label> <span th:text="${product.name}"></span></p>
+      <p><label>Giá:</label> <span th:text="${product.price} + ' đ'"></span></p>
+      <p><label>Mô tả:</label> <span th:text="${product.description}"></span></p>
+      <p><label>Danh mục:</label> <span th:text="${product.categoryName}"></span></p>
+    </div>
+    <a href="/products" class="btn">⬅ Quay lại</a>
+    <a th:href="@{'/products/form?id=' + ${product.id}}" class="btn">✏️ Chỉnh sửa</a>
+  </div>
+</body>
+</html>
