@@ -109,8 +109,8 @@
       <tbody>
         <!-- Thymeleaf -->
         <tr th:each="p : ${products}">
-          <td th:text="${p.id}"></td>
-          <td th:text="${p.name}"></td>
+          <td th:text="${p.productId}"></td>
+          <td th:text="${p.productName}"></td>
           <td th:text="${p.price} + ' đ'"></td>
           <td th:text="${p.description}"></td>
           <td th:text="${p.categoryName}"></td>
@@ -142,3 +142,4 @@
   </script>
 </body>
 </html>
+
