@@ -100,15 +100,15 @@
     </thead>
     <tbody>
     <tr th:each="category : ${categories}">
-        <td th:text="${category.id}"></td>
+        <td th:text="${category.categoryId}"></td>
         <td>
-            <a th:href="@{'/categories/' + ${category.id}}" th:text="${category.name}"></a>
+            <a th:href="@{'/categories/' + ${category.categoryId}}" th:text="${category.categoryName}"></a>
         </td>
         <td th:text="${category.description}"></td>
         <td class="actions">
-            <a th:href="@{'/categories/edit/' + ${category.id}}">✏️ Sửa</a>
-            <a th:href="@{'/categories/delete/' + ${category.id}}"
-               th:onclick="'return confirmDelete(\'' + ${category.name} + '\');'">🗑️ Xóa</a>
+            <a th:href="@{'/categories/edit/' + ${category.categoryId}}">✏️ Sửa</a>
+            <a th:href="@{'/categories/delete/' + ${category.categoryId}}"
+               th:onclick="'return confirmDelete(\'' + ${category.categoryName} + '\');'">🗑️ Xóa</a>
         </td>
     </tr>
     <tr th:if="${#lists.isEmpty(categories)}">
