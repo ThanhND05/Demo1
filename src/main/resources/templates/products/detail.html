@@ -45,8 +45,8 @@
   <div class="container">
     <h2>Chi tiết sản phẩm</h2>
     <div class="info">
-      <p><label>ID:</label> <span th:text="${product.id}"></span></p>
-      <p><label>Tên:</label> <span th:text="${product.name}"></span></p>
+      <p><label>ID:</label> <span th:text="${product.productId}"></span></p>
+      <p><label>Tên:</label> <span th:text="${product.productName}"></span></p>
       <p><label>Giá:</label> <span th:text="${product.price} + ' đ'"></span></p>
       <p><label>Mô tả:</label> <span th:text="${product.description}"></span></p>
       <p><label>Danh mục:</label> <span th:text="${product.categoryName}"></span></p>
@@ -56,3 +56,4 @@
   </div>
 </body>
 </html>
+
