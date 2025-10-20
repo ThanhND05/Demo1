@@ -51,9 +51,9 @@
   <div class="form-container">
     <h2 th:text="${product != null} ? 'Cập nhật sản phẩm' : 'Thêm sản phẩm mới'"></h2>
     <form th:action="${product != null} ? '/products/update' : '/products'" method="post">
-      <input type="hidden" name="id" th:value="${product.id}">
+      <input type="hidden" name="id" th:value="${product.productId}">
       <label>Tên sản phẩm</label>
-      <input type="text" name="name" th:value="${product.name}" required>
+      <input type="text" name="name" th:value="${product.productName}" required>
 
       <label>Giá</label>
       <input type="number" name="price" th:value="${product.price}" required>
@@ -70,3 +70,4 @@
   </div>
 </body>
 </html>
+
