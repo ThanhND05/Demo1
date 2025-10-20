@@ -53,7 +53,7 @@
     <!-- JS kiểm tra form -->
     <script>
         function validateForm() {
-            const name = document.getElementById('name').value.trim();
+            const name = document.getElementById('categoryName').value.trim();
             if (name === "") {
                 alert("Tên danh mục không được để trống!");
                 return false;
@@ -64,19 +64,19 @@
 </head>
 
 <body>
-<h2 th:text="${category.id != null ? '✏️ Chỉnh sửa danh mục' : '➕ Thêm danh mục mới'}"></h2>
+<h2 th:text="${category.categoryId != null ? '✏️ Chỉnh sửa danh mục' : '➕ Thêm danh mục mới'}"></h2>
 
-<form th:action="${category.id != null} ? @{/categories/update} : @{/categories}"
+<form th:action="${category.categoryId != null} ? @{/categories/update} : @{/categories}"
       th:object="${category}" method="post" onsubmit="return validateForm()">
 
-    <input type="hidden" th:field="*{id}">
+    <!-- Ẩn categoryId khi sửa -->
+    <input type="hidden" th:field="*{categoryId}">
 
-    <label for="name">Tên danh mục:</label>
-    <input type="text" id="name" th:field="*{name}" placeholder="Nhập tên danh mục">
+    <label for="categoryName">Tên danh mục:</label>
+    <input type="text" id="categoryName" th:field="*{categoryName}" placeholder="Nhập tên danh mục">
 
     <label for="description">Mô tả:</label>
-    <textarea id="description" th:field="*{description}" rows="4"
-              placeholder="Nhập mô tả..."></textarea>
+    <textarea id="description" th:field="*{description}" rows="4" placeholder="Nhập mô tả..."></textarea>
 
     <div style="text-align: center; margin-top: 15px;">
         <button type="submit">💾 Lưu</button>
