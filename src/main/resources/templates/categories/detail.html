@@ -52,12 +52,12 @@
 <div class="card">
     <h2>📋 Chi tiết danh mục</h2>
 
-    <p><strong>ID:</strong> <span th:text="${category.id}"></span></p>
-    <p><strong>Tên danh mục:</strong> <span th:text="${category.name}"></span></p>
+    <p><strong>ID:</strong> <span th:text="${category.categoryId}"></span></p>
+    <p><strong>Tên danh mục:</strong> <span th:text="${category.categoryName}"></span></p>
     <p><strong>Mô tả:</strong> <span th:text="${category.description}"></span></p>
 
     <div class="actions">
-        <a th:href="@{'/categories/edit/' + ${category.id}}" class="btn">✏️ Chỉnh sửa</a>
+        <a th:href="@{'/categories/edit/' + ${category.categoryId}}" class="btn">✏️ Chỉnh sửa</a>
         <a th:href="@{/categories}" class="btn">↩️ Quay lại danh sách</a>
     </div>
 </div>
