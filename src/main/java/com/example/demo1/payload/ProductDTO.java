@@ -1,7 +1,6 @@
 package com.example.demo1.payload;
 
 import com.example.demo1.entity.ProductEnum;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 

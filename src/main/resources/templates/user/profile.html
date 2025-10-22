@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Thông tin cá nhân</title>
+  <style>
+    body {
+      font-family: "Segoe UI", sans-serif;
+      background-color: #f4f6f8;
+      margin: 0;
+    }
+
+    .container {
+      width: 50%;
+      margin: 50px auto;
+      background: white;
+      border-radius: 12px;
+      padding: 25px 40px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      text-align: center;
+      color: #007bff;
+      margin-bottom: 25px;
+    }
+
+    .info p {
+      font-size: 16px;
+      line-height: 1.6;
+      padding: 8px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .info label {
+      font-weight: bold;
+      color: #555;
+      display: inline-block;
+      width: 120px;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 10px 20px;
+      background: #007bff;
+      color: white;
+      border-radius: 6px;
+      text-decoration: none;
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    .btn:hover {
+      background: #0056b3;
+    }
+
+    .alert {
+      padding: 10px 15px;
+      border-radius: 6px;
+      margin-bottom: 15px;
+    }
+
+    .alert-success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .alert-error {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+  </style>
+</head>
+<body>
+<div th:replace="~{fragments/_header :: header}"></div>
+  <div class="container">
+    <h2>Thông tin cá nhân</h2>
+
+    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+    <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+    <div class="info">
+      <p><label>Họ tên:</label> <span th:text="${user.name}"></span></p>
+      <p><label>Email:</label> <span th:text="${user.email}"></span></p>
+      <p><label>Số điện thoại:</label> <span th:text="${user.phone}"></span></p>
+      <p><label>Địa chỉ:</label> <span th:text="${user.address}"></span></p>
+        <p>
+            <label>Vai trò:</label>
+            <span>
+                <span th:each="role : ${user.roles}" th:text="${role.roleName}" th:append="' '"></span>
+            </span>
+        </p>
+    </div>
+
+    <a href="/user/me/edit" class="btn">✏️ Chỉnh sửa thông tin</a>
+  </div>
+
+  <script>
+    setTimeout(() => {
+      const alerts = document.querySelectorAll('.alert');
+      alerts.forEach(a => a.style.display = 'none');
+    }, 3000);
+  </script>
+</body>
+</html>

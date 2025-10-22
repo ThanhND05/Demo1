@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -16,31 +17,40 @@ public class CartItemController {
     @Autowired
     private CartItemService cartItemService;
 
-    // Hiển thị danh sách sản phẩm trong giỏ hàng
     @GetMapping("/cart/{cartId}")
     public String getItemsByCartId(@PathVariable("cartId") Integer cartId, Model model) {
         List<CartItemDTO> items = cartItemService.getCartItemsByCartId(cartId);
         model.addAttribute("items", items);
         model.addAttribute("cartId", cartId);
-        return "cart/items"; // => templates/cart/items.html
+        return "cart/items";
     }
 
-    // Thêm sản phẩm vào giỏ hàng (dùng form Thymeleaf)
+
     @PostMapping("/add")
-    public String addCartItem(@ModelAttribute CartItemDTO cartItemDTO) {
-        cartItemService.addCartItem(cartItemDTO);
-        return "redirect:/cartitems/cart/" + cartItemDTO.getCartId();
+    public String addCartItem(@ModelAttribute CartItemDTO cartItemDTO,
+                              RedirectAttributes redirectAttributes) { // Thêm RedirectAttributes
+        try {
+            cartItemService.addCartItem(cartItemDTO);
+            redirectAttributes.addFlashAttribute("addCartSuccess", "Đã thêm sản phẩm vào giỏ hàng!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("addCartError", "Lỗi thêm vào giỏ: " + e.getMessage());
+        }
+
+        Integer productId = (cartItemDTO.getProduct() != null) ? cartItemDTO.getProduct().getProductId() : null;
+        if (productId != null) {
+            return "redirect:/products/id/" + productId;
+        } else {
+            return "redirect:/products";
+        }
     }
 
-    // Cập nhật sản phẩm trong giỏ hàng
     @PostMapping("/update")
     public String updateCartItem(@ModelAttribute CartItemDTO cartItemDTO) {
         cartItemService.updateCartItem(cartItemDTO);
         return "redirect:/cartitems/cart/" + cartItemDTO.getCartId();
     }
 
-    // Xóa sản phẩm khỏi giỏ hàng
-    @GetMapping("/delete/{cartItemId}/{cartId}")
+    @PostMapping("/delete/{cartItemId}/{cartId}")
     public String deleteCartItem(@PathVariable Integer cartItemId, @PathVariable Integer cartId) {
         cartItemService.deleteCartItem(cartItemId);
         return "redirect:/cartitems/cart/" + cartId;

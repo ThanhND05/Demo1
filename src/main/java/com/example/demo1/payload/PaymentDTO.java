@@ -11,4 +11,6 @@ public class PaymentDTO {
     private LocalDateTime paymentDate;
     private BigDecimal amount;
     private String paymentStatus;
+    private String paymentMethod; // Kiểu String
+    private String transactionId;
 }

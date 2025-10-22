@@ -5,6 +5,7 @@ import com.example.demo1.entity.Category;
 import com.example.demo1.payload.CategoryDTO;
 import com.example.demo1.repository.CategoryRepository;
 import com.example.demo1.service.CategoryService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +17,6 @@ import java.util.stream.Collectors;
 public class CategoryServiceImpl implements CategoryService {
     @Autowired
     private CategoryRepository categoryRepository;
-
     @Autowired
     private CategoryConverter categoryConverter;
 

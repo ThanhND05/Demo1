@@ -8,6 +8,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/user")
@@ -17,41 +18,56 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
-    // --- Hiển thị trang thông tin người dùng hiện tại ---
+    private User getUserFromAuthentication(Authentication authentication) {
+        if (authentication == null) {
+            throw new RuntimeException("Người dùng chưa được xác thực.");
+        }
+        String email = authentication.getName();
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy user với email: " + email));
+    }
+
     @GetMapping("/me")
     public String getCurrentUser(Authentication authentication, Model model) {
-        String email = authentication.getName();
-        User user = userRepository.findByEmail(email);
-        model.addAttribute("user", user);
-        return "user/profile"; // templates/user/profile.html
+        try {
+            User user = getUserFromAuthentication(authentication);
+            model.addAttribute("user", user);
+            return "user/profile";
+        } catch (RuntimeException e) {
+            return "redirect:/auth/login?error=user_not_found";
+        }
     }
 
-    // --- Hiển thị form cập nhật thông tin cá nhân ---
     @GetMapping("/me/edit")
     public String showEditProfileForm(Authentication authentication, Model model) {
-        String email = authentication.getName();
-        User user = userRepository.findByEmail(email);
-        model.addAttribute("user", user);
-        return "user/edit"; // templates/user/edit.html
+        try {
+            User user = getUserFromAuthentication(authentication);
+            model.addAttribute("user", user);
+            return "user/edit";
+        } catch (RuntimeException e) {
+            return "redirect:/auth/login?error=user_not_found";
+        }
     }
 
-    // --- Xử lý cập nhật thông tin cá nhân ---
     @PostMapping("/me")
-    public String updateProfile(Authentication authentication, @ModelAttribute("user") User updateUser, Model model) {
-        String email = authentication.getName();
-        User user = userRepository.findByEmail(email);
+    public String updateProfile(Authentication authentication,
+                                @RequestParam String name,
+                                @RequestParam String phone,
+                                @RequestParam String address,
+                                RedirectAttributes redirectAttributes) {
+        try {
+            User userInDb = getUserFromAuthentication(authentication);
+            userInDb.setName(name);
+            userInDb.setPhone(phone);
+            userInDb.setAddress(address);
+            userRepository.save(userInDb);
+            redirectAttributes.addFlashAttribute("success", "Cập nhật thông tin thành công!");
 
-        if (user != null) {
-            user.setName(updateUser.getName());
-            user.setPhone(updateUser.getPhone());
-            user.setAddress(updateUser.getAddress());
-            userRepository.save(user);
-            model.addAttribute("success", "Cập nhật thông tin thành công!");
-        } else {
-            model.addAttribute("error", "Không tìm thấy người dùng!");
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("error", "Lỗi cập nhật: " + e.getMessage());
         }
 
-        model.addAttribute("user", user);
-        return "user/profile"; // sau khi cập nhật, quay lại trang profile
+        return "redirect:/user/me";
+
     }
 }

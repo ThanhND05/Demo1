@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Danh sách sản phẩm</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #007bff;
+            color: white;
+            padding: 15px;
+            text-align: center;
+        }
+        .container {
+            width: 90%;
+            margin: 20px auto;
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 10px #ccc;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            text-align: center;
+            padding: 10px;
+        }
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+        .btn {
+            display: inline-block;
+            padding: 8px 12px;
+            margin: 4px;
+            background: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            border: none;
+        }
+        .btn:hover {
+            background: #0056b3;
+        }
+
+        .filter-search-form {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .filter-search-form select,
+        .filter-search-form input {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+        .pagination {
+            margin-top: 15px;
+            text-align: center;
+        }
+        .pagination a {
+            padding: 6px 12px;
+            margin: 2px;
+            background: #007bff;
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+        .pagination a.active {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+<div th:replace="~{fragments/_header :: header}"></div>
+<header>
+    <h2>Danh sách sản phẩm</h2>
+</header>
+
+<div class="container">
+
+    <div class="search-box">
+        <form th:action="@{/products}" method="get" class="filter-search-form">
+
+            <select name="categoryId" onchange="this.form.submit()">
+                <option value="">-- Lọc theo danh mục --</option>
+                <option th:each="cat : ${categories}"
+                        th:value="${cat.categoryId}"
+                        th:text="${cat.categoryName}"
+                        th:selected="${cat.categoryId != null && cat.categoryId.equals(selectedCategoryId)}">
+                </option>
+            </select>
+
+            <input type="text" name="productName" placeholder="Tìm sản phẩm..." th:value="${searchKey}">
+            <button type="submit" class="btn">Tìm kiếm</button>
+            <a th:href="@{/products}" class="btn" style="background-color: #6c757d;">Reset</a>
+        </form>
+    </div>
+
+    <a href="/products/form" class="btn" sec:authorize="hasRole('ADMIN')">+ Thêm sản phẩm mới</a>
+
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Tên sản phẩm</th>
+            <th>Giá</th>
+            <th>Mô tả</th>
+            <th>Danh mục</th>
+            <th sec:authorize="hasRole('ADMIN')">Hành động</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="p : ${products}">
+            <td th:text="${p.productId}"></td>
+            <td th:text="${p.productName}"></td>
+            <td th:text="${#numbers.formatDecimal(p.price, 0, 'COMMA', 0, 'POINT')} + ' đ'"></td>
+            <td th:text="${p.description}"></td>
+            <td th:text="${p.categoryName}"></td>
+            <td>
+                <a th:href="@{'/products/id/' + ${p.productId}}" class="btn">Chi tiết</a>
+                <form sec:authorize="hasRole('ADMIN')" th:action="@{'/products/delete/' + ${p.productId}}"
+                      method="post"
+                      style="display:inline;">
+                    <button type="submit" class="btn" style="background:red;">Xóa</button>
+                </form>
+            </td>
+        </tr>
+        <tr th:if="${products == null or products.isEmpty()}">
+            <td colspan="6" style="text-align: center; color: gray;">Không tìm thấy sản phẩm nào.</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div class="pagination" th:if="${totalPages > 0}">
+        <a th:each="i : ${#numbers.sequence(0, totalPages-1)}"
+           th:classappend="${i} == ${currentPage} ? 'active'"
+           th:href="@{/products(page=${i}, categoryId=${selectedCategoryId}, productName=${searchKey})}"
+           th:text="${i + 1}">1</a>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("click", function(e) {
+        if (e.target.matches(".btn[style*='red']")) {
+            if (!confirm("Bạn có chắc muốn xóa sản phẩm này?")) {
+                e.preventDefault();
+            }
+        }
+    });
+</script>
+</body>
+</html>

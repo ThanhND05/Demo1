@@ -1,6 +1,6 @@
 package com.example.demo1.payload;
 
-import lombok.Data;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,6 +8,7 @@ import lombok.Setter;
 @Setter
 public class CategoryDTO {
     private Integer categoryId;
+    @NotEmpty(message = "Tên danh mục không được để trống") // <-- Thêm
     private String categoryName;
     private String description;
 }

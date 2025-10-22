@@ -13,7 +13,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import java.util.List;
 
 @Service
 @Transactional
@@ -45,14 +44,9 @@ public class OrdersServiceImpl implements OrdersService {
             orderItem.setPrice(cartItem.getProduct().getPrice());
             order.addItem(orderItem);
         }
-
-        // Entity sẽ tự tính tổng tiền nhờ @PrePersist/@PreUpdate
         Orders savedOrder = ordersRepository.save(order);
-
-        // Xóa giỏ hàng sau khi tạo đơn hàng thành công
         cart.getItems().clear();
         cartRepository.save(cart);
-
         return ordersConverter.toDTO(savedOrder);
     }
 
@@ -66,39 +60,30 @@ public class OrdersServiceImpl implements OrdersService {
         if (!userRepository.existsById(userId)) {
             throw new ResourceNotFoundException("User", "id", userId);
         }
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        Pageable pageable = PageRequest.of(page, size, Sort.by("orderDate").descending());
         Page<Orders> ordersPage = ordersRepository.findByUser_UserId(userId, pageable);
         return ordersPage.map(ordersConverter::toDTO);
     }
-
     @Override
     public OrdersDTO updateOrderStatus(Integer orderId, OrderStatus status) {
         Orders order = ordersRepository.findById(orderId).orElseThrow(() -> new RuntimeException("Order not found!"));
         order.setStatus(status);
-        // Không cần gọi save() tường minh nếu phương thức được bao bởi @Transactional
         return ordersConverter.toDTO(order);
     }
     @Override
     public OrdersDTO cancelOrder(Integer orderId, Integer userId) {
         Orders order = ordersRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found!"));
-
-        // KIỂM TRA BẢO MẬT: Đảm bảo người dùng chỉ hủy đơn hàng của mình
         if (!order.getUser().getUserId().equals(userId)) {
             throw new SecurityException("User is not authorized to cancel this order.");
         }
-
-        // KIỂM TRA LOGIC NGHIỆP VỤ: Chỉ hủy được đơn hàng đang chờ hoặc đang xử lý
         if (order.getStatus() == OrderStatus.SHIPPING || order.getStatus() == OrderStatus.COMPLETED) {
             throw new IllegalStateException("Cannot cancel an order that is already shipping or completed.");
         }
-
-        // Cập nhật trạng thái
         order.setStatus(OrderStatus.CANCELLED);
-
-        // @Transactional sẽ tự động lưu thay đổi khi kết thúc phương thức
         return ordersConverter.toDTO(order);
     }
+
     @Override
     public void deleteOrder(Integer orderId) {
         if (!ordersRepository.existsById(orderId)) {
@@ -123,7 +108,6 @@ public class OrdersServiceImpl implements OrdersService {
 
         order.addItem(newItem);
         Orders updatedOrder = ordersRepository.save(order);
-        // JPA sẽ tự động lưu order và tính lại tổng tiền
         return ordersConverter.toDTO(updatedOrder);
     }
 
@@ -142,7 +126,6 @@ public class OrdersServiceImpl implements OrdersService {
         itemToUpdate.setQuantity(newQuantity);
         order.calculateTotalAmount();
         Orders updatedOrder = ordersRepository.save(order);
-        // JPA sẽ tự động cập nhật item và tính lại tổng tiền của order
         return ordersConverter.toDTO(updatedOrder);
     }
 
@@ -157,7 +140,7 @@ public class OrdersServiceImpl implements OrdersService {
                 .filter(item -> item.getOrderItemId().equals(orderItemId))
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("Item not found in this order."));
-
+        order.removeItem(itemToRemove);
         Orders updatedOrder = ordersRepository.save(order);
         return ordersConverter.toDTO(updatedOrder);
     }

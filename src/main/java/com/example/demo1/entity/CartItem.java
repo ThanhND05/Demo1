@@ -1,6 +1,5 @@
 package com.example.demo1.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
@@ -24,6 +23,5 @@ public class CartItem {
 
     @ManyToOne
     @JoinColumn(name = "productId", nullable = false)
-    @JsonIgnore
     private Product product;
 }

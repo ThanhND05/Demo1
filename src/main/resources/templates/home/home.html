@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Trang Chủ - Cửa Hàng</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            background-color: #f8f9fa;
+        }
+
+        .hero {
+            background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('/image/banner/banner_home.webp');
+            background-size: cover;
+            background-position: center;
+            height: 60vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white;
+        }
+        .hero h1 {
+            font-size: 3.5em;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        .hero p {
+            font-size: 1.2em;
+            margin-bottom: 30px;
+        }
+        .hero .btn {
+            padding: 12px 25px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 1.1em;
+            transition: background-color 0.3s ease;
+        }
+        .hero .btn:hover {
+            background-color: #0056b3;
+        }
+
+        .content-section {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+            text-align: center;
+        }
+        .content-section h2 {
+            color: #333;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #007bff;
+            display: inline-block;
+            padding-bottom: 5px;
+        }
+
+    </style>
+</head>
+<body>
+
+<div th:replace="~{fragments/_header :: header}"></div>
+
+<div class="hero">
+    <h1>Chào Mừng Đến Cửa Hàng</h1>
+    <p>Khám phá bộ sưu tập thời trang mới nhất của chúng tôi.</p>
+    <a th:href="@{/products}" class="btn">Mua Sắm Ngay</a>
+</div>
+
+<div class="content-section">
+    <h2>Sản Phẩm Nổi Bật</h2>
+    <p><i>(Khu vực hiển thị sản phẩm nổi bật)</i></p>
+</div>
+
+</body>
+</html>

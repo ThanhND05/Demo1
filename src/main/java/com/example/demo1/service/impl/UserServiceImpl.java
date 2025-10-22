@@ -12,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -34,8 +35,6 @@ public class UserServiceImpl implements UserService {
             role = new Role(TableConstants.USER);
             roleRepository.save(role);
         }
-
-        // Create a new HashSet and add the role to it
         Set<Role> roles = new HashSet<>();
         roles.add(role);
 
@@ -46,9 +45,8 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
     }
 
-
     @Override
-    public User findUserByEmail(String email) {
+    public Optional<User> findUserByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 }

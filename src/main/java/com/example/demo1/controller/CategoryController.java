@@ -2,21 +2,24 @@ package com.example.demo1.controller;
 
 import com.example.demo1.payload.CategoryDTO;
 import com.example.demo1.service.CategoryService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @Controller
 @RequestMapping("/categories")
+@PreAuthorize("hasRole('ADMIN')")
 public class CategoryController {
 
     @Autowired
     private CategoryService categoryService;
 
-    // ----- HIỂN THỊ TẤT CẢ CATEGORY -----
     @GetMapping
     public String getAllCategories(Model model) {
         List<CategoryDTO> categories = categoryService.getAllCategories();
@@ -24,51 +27,59 @@ public class CategoryController {
         return "categories/list"; // templates/categories/list.html
     }
 
-    // ----- HIỂN THỊ FORM TẠO MỚI -----
     @GetMapping("/new")
+    @PreAuthorize("hasRole('ADMIN')")
     public String showCreateForm(Model model) {
         model.addAttribute("category", new CategoryDTO());
         return "categories/form"; // templates/categories/form.html
     }
 
-    // ----- XỬ LÝ TẠO MỚI -----
     @PostMapping
-    public String createCategory(@ModelAttribute("category") CategoryDTO category) {
+    @PreAuthorize("hasRole('ADMIN')")
+    public String createCategory(@Valid @ModelAttribute("category") CategoryDTO category,
+                                 BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return "categories/form";
+        }
         categoryService.addCategory(category);
         return "redirect:/categories";
     }
 
-    // ----- HIỂN THỊ FORM CHỈNH SỬA -----
     @GetMapping("/edit/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public String showEditForm(@PathVariable("id") Integer id, Model model) {
         CategoryDTO category = categoryService.getCategoryById(id);
         model.addAttribute("category", category);
         return "categories/form";
     }
 
-    // ----- XỬ LÝ CẬP NHẬT -----
     @PostMapping("/update")
-    public String updateCategory(@ModelAttribute("category") CategoryDTO category) {
+    @PreAuthorize("hasRole('ADMIN')")
+    public String updateCategory(@Valid @ModelAttribute("category") CategoryDTO category,
+                                 BindingResult bindingResult) { // <-- Thêm
+
+        if (bindingResult.hasErrors()) {
+            return "categories/form";
+        }
+
         categoryService.updateCategory(category);
         return "redirect:/categories";
     }
 
-    // ----- XEM CHI TIẾT CATEGORY -----
     @GetMapping("/{id}")
     public String getCategoryById(@PathVariable("id") Integer id, Model model) {
         CategoryDTO category = categoryService.getCategoryById(id);
         model.addAttribute("category", category);
-        return "categories/detail"; // templates/categories/detail.html
+        return "categories/detail";
     }
 
-    // ----- XOÁ CATEGORY -----
-    @GetMapping("/delete/{id}")
+    @PostMapping("/delete/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public String deleteCategory(@PathVariable("id") Integer id) {
         categoryService.deleteCategory(id);
         return "redirect:/categories";
     }
 
-    // ----- TÌM KIẾM CATEGORY THEO TÊN -----
     @GetMapping("/search")
     public String searchCategoryByName(@RequestParam("name") String categoryName, Model model) {
         List<CategoryDTO> list = categoryService.searchCategoryByName(categoryName);

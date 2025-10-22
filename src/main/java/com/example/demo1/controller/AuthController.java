@@ -6,16 +6,13 @@ import com.example.demo1.entity.User;
 import com.example.demo1.payload.SignUpDTO;
 import com.example.demo1.repository.RoleRepository;
 import com.example.demo1.repository.UserRepository;
-import com.example.demo1.security.JwtTokenProvider;
-import com.example.demo1.service.impl.TokenBlacklistService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -32,49 +29,21 @@ public class AuthController {
     private RoleRepository roleRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
-    @Autowired
-    private JwtTokenProvider tokenProvider;
-    @Autowired
-    private TokenBlacklistService tokenBlacklistService;
 
-    // ----- HIỂN THỊ FORM LOGIN -----
+
     @GetMapping("/login")
     public String showLoginForm() {
-        return "auth/login"; // trỏ đến templates/auth/login.html
+        return "auth/login";
     }
 
-    // ----- XỬ LÝ LOGIN -----
-    @PostMapping("/login")
-    public String loginUser(@RequestParam String usernameOrEmail,
-                            @RequestParam String password,
-                            Model model) {
-        try {
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(usernameOrEmail, password));
-
-            // nếu login thành công, lưu token hoặc session nếu cần
-            String token = tokenProvider.generateToken(authentication);
-            model.addAttribute("token", token);
-            model.addAttribute("username", usernameOrEmail);
-
-            // chuyển đến dashboard
-            return "redirect:/home";
-        } catch (Exception e) {
-            model.addAttribute("error", "Tên đăng nhập hoặc mật khẩu sai!");
-            return "auth/login";
-        }
-    }
-
-    // ----- HIỂN THỊ FORM REGISTER -----
     @GetMapping("/register")
     public String showRegisterForm(Model model) {
         model.addAttribute("user", new SignUpDTO());
-        return "auth/register"; // trỏ tới templates/auth/register.html
+        return "auth/register";
     }
 
-    // ----- XỬ LÝ REGISTER -----
     @PostMapping("/register")
-    public String registerUser(@ModelAttribute("user") SignUpDTO signUpDto, Model model) {
+    public String registerUser(@ModelAttribute("user") SignUpDTO signUpDto, Model model, RedirectAttributes redirectAttributes) { // Thêm RedirectAttributes
         if (userRepository.existsByName(signUpDto.getUsername())) {
             model.addAttribute("error", "Tên đăng nhập đã tồn tại!");
             return "auth/register";
@@ -109,16 +78,9 @@ public class AuthController {
 
         userRepository.save(user);
 
-        model.addAttribute("success", "Đăng ký thành công! Hãy đăng nhập.");
-        return "auth/login";
-    }
 
-    // ----- LOGOUT -----
-    @GetMapping("/logout")
-    public String logoutUser(@RequestParam(required = false) String token, Model model) {
-        if (token != null) {
-            tokenBlacklistService.blacklistToken(token);
-        }
+        redirectAttributes.addFlashAttribute("success", "Đăng ký thành công! Hãy đăng nhập.");
         return "redirect:/auth/login";
     }
+
 }

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Thêm / Sửa sản phẩm</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      margin: 0;
+    }
+    .form-container {
+      width: 40%;
+      margin: 40px auto;
+      background: white;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #ccc;
+    }
+    h2 {
+      text-align: center;
+      color: #007bff;
+    }
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 10px;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      margin-top: 5px;
+    }
+    button {
+      margin-top: 15px;
+      background-color: #007bff;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    select {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        margin-top: 5px;
+        background-color: white;
+        font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+<div class="form-container">
+    <h2 th:text="${product.productId != null} ? 'Cập nhật sản phẩm' : 'Thêm sản phẩm mới'"></h2>
+
+    <form th:action="${product.productId != null} ? '/products/update' : '/products'"
+          th:object="${product}"
+          method="post"
+          enctype="multipart/form-data">
+
+        <input type="hidden" th:field="*{productId}">
+
+        <label>Tên sản phẩm</label>
+        <input type="text" th:field="*{productName}" required>
+
+        <label>Giá</label>
+        <input type="number" th:field="*{price}" required>
+
+        <label>Số lượng tồn kho</label>
+        <input type="number" th:field="*{stockQuantity}" required>
+
+        <label>Màu sắc</label>
+        <input type="text" th:field="*{color}">
+
+        <label>Kích cỡ (Size)</label>
+        <select th:field="*{size}">
+            <option value="">-- Chọn kích cỡ --</option>
+            <option th:each="s : ${productSizes}"
+                    th:value="${s}"
+                    th:text="${s.displayName}">
+            </option>
+        </select>
+
+        <label>Mô tả</label>
+        <textarea th:field="*{description}" rows="4"></textarea>
+
+        <label>Danh mục</label>
+        <select th:field="*{categoryId}" required>
+            <option value="">-- Chọn danh mục --</option>
+            <option th:each="cat : ${categories}"
+                    th:value="${cat.categoryId}"
+                    th:text="${cat.categoryName}">
+            </option>
+        </select>
+
+        <label>Ảnh sản phẩm</label>
+        <input type="file" name="imageFile" accept="image/png, image/jpeg">
+
+        <div th*if="${product.imageUrl}" style="margin-top:10px;">
+            <label>Ảnh hiện tại:</label><br>
+            <img th:src="@{${product.imageUrl}}" width="150" alt="Ảnh sản phẩm">
+        </div>
+
+        <button type="submit">💾 Lưu</button>
+        <a href="/products" style="margin-left:10px;">Hủy</a>
+    </form>
+</div>
+</body>
+</html>
+
