@@ -98,51 +98,56 @@
     </style>
 </head>
 <body>
-
+<div th:replace="~{fragments/_header :: header}"></div>
 <header>🛍 Giỏ hàng của bạn</header>
 
 <div class="cart-container">
 
     <div th:if="${#lists.isEmpty(cart.items)}" class="empty">
         Giỏ hàng của bạn hiện đang trống.
-        <br>
-        <br>
+        <br><br>
         <a href="/products" class="btn" style="margin-top:10px;">🛒 Mua sắm ngay</a>
     </div>
 
     <div th:if="${!#lists.isEmpty(cart.items)}">
         <table>
             <thead>
-                <tr>
-                    <th>Ảnh</th>
-                    <th>Sản phẩm</th>
-                    <th>Giá</th>
-                    <th>Số lượng</th>
-                    <th>Tổng</th>
-                </tr>
+            <tr>
+                <th>Ảnh</th>
+                <th>Sản phẩm</th>
+                <th>Giá</th>
+                <th>Số lượng</th>
+                <th>Tổng</th>
+            </tr>
             </thead>
             <tbody>
-                <tr th:each="item : ${cart.items}">
-                    <td><img th:src="${item.imageUrl}" alt="Ảnh sản phẩm" class="product-img"></td>
-                    <td th:text="${item.name}"></td>
-                    <td th:text="${#numbers.formatDecimal(item.price, 0, 'POINT', 0, 'COMMA')} + ' ₫'"></td>
-                    <td th:text="${item.quantity}"></td>
-                    <td th:text="${#numbers.formatDecimal(item.price * item.quantity, 0, 'POINT', 0, 'COMMA')} + ' ₫'"></td>
-                </tr>
+            <tr th:each="item : ${cart.items}">
+                <td><img th:src="@{${item.product.imageUrl}}" alt="Ảnh sản phẩm" class="product-img"></td>
+
+                <td>
+                    <a th:href="@{'/products/id/' + ${item.product.productId}(origin='cart')}"
+                       th:text="${item.product.productName}"
+                       style="text-decoration: none; color: #2c7a7b; font-weight: 500;">
+                    </a>
+                </td>
+                <td th:text="${#numbers.formatDecimal(item.product.price, 0, 'POINT', 0, 'COMMA')} + ' ₫'"></td>
+                <td th:text="${item.quantity}"></td>
+                <td th:text="${#numbers.formatDecimal(item.product.price * item.quantity, 0, 'POINT', 0, 'COMMA')} + ' ₫'"></td>
+            </tr>
             </tbody>
         </table>
 
         <div class="summary">
-            Tổng cộng: 
-            <span th:text="${#numbers.formatDecimal(cart.totalPrice, 0, 'POINT', 0, 'COMMA')} + ' ₫'"></span>
+            Tổng cộng:
+            <span th:text="${#numbers.formatDecimal(#aggregates.sum(cart.items.![product.price * quantity]), 0, 'POINT', 0, 'COMMA')} + ' ₫'">
+            </span>
         </div>
 
         <div class="buttons">
-            <a th:href="@{'/cartitems/cart/' + ${cart.id}}" class="btn">🧾 Xem chi tiết</a>
-            <a th:href="@{'/payments/order/' + ${cart.id}}" class="btn btn-secondary">💳 Thanh toán</a>
+            <a th:href="@{'/cartitems/cart/' + ${cart.cartId}}" class="btn">🧾 Xem chi tiết</a>
+            <a th:href="@{/orders/create-from-cart}" class="btn btn-secondary">🛒 Đặt hàng</a>
         </div>
     </div>
-
 </div>
 </body>
 </html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <style>
+        .navbar {
+            background-color: #333;
+            overflow: hidden;
+            padding: 10px 20px;
+        }
+        .navbar a {
+            float: left;
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
+        .navbar a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+        .navbar .right {
+            float: right;
+        }
+        .navbar .username {
+            color: #f2f2f2;
+            padding: 14px 10px;
+            float: left;
+        }
+        .navbar .logout-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 14px 16px;
+            cursor: pointer;
+        }
+        .navbar .logout-btn:hover {
+            background: #c82333;
+        }
+    </style>
+</head>
+<body>
+
+<div class="navbar" th:fragment="header">
+    <a th:href="@{/}">Trang Chủ</a>
+    <a th:href="@{/products}">Sản Phẩm</a>
+    <a sec:authorize="hasRole('ADMIN')" th:href="@{/categories}">Danh Mục</a>
+    <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin/payments}">Doanh Thu</a>
+    <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin}">Quản Trị</a>
+
+    <div class="right">
+        <span sec:authorize="isAuthenticated()" class="username">
+            Chào, <span sec:authentication="name"></span>
+        </span>
+        <a sec:authorize="isAuthenticated()" th:href="@{/cart/my-cart}">🛒 Giỏ Hàng</a>
+        <a sec:authorize="isAuthenticated()" th:href="@{/orders/my-orders}">🧾 Đơn Hàng</a>
+        <a sec:authorize="isAuthenticated()" th:href="@{/user/me}">👤 Tài Khoản</a>
+        <form sec:authorize="isAuthenticated()" th:action="@{/auth/logout}" method="post" style="float: right; margin: 0;">
+            <button type="submit" class="logout-btn">Đăng Xuất</button>
+        </form>
+        <a sec:authorize="!isAuthenticated()" th:href="@{/auth/login}">Đăng Nhập</a>
+    </div>
+</div>
+
+</body>
+</html>

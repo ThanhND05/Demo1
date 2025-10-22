@@ -1,6 +1,5 @@
 package com.example.demo1.payload;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 

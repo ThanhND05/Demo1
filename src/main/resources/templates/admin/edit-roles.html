@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Chỉnh sửa vai trò người dùng</title>
+    <style>
+        body { font-family: "Segoe UI", sans-serif; padding: 30px; background: #f5f6fa; }
+        .container { max-width: 600px; margin: auto; background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        h1 { color: #2c3e50; text-align: center; }
+        .user-info p { margin: 5px 0; }
+        .roles-list label { display: block; margin-bottom: 8px; cursor: pointer; }
+        .roles-list input[type="checkbox"] { margin-right: 8px; }
+        .buttons { margin-top: 20px; text-align: center; }
+        .btn { padding: 10px 15px; border-radius: 5px; text-decoration: none; border: none; cursor: pointer; }
+        .btn-save { background-color: #28a745; color: white; }
+        .btn-cancel { background-color: #6c757d; color: white; margin-left: 10px; }
+        .alert-error {
+            color: red;
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Chỉnh sửa vai trò</h1>
+    <div th:if="${errorMessage}" class="alert-error" th:text="${errorMessage}"></div>
+    <div class="user-info">
+        <p><strong>ID:</strong> <span th:text="${user.userId}"></span></p>
+        <p><strong>Tên đăng nhập:</strong> <span th:text="${user.name}"></span></p>
+        <p><strong>Email:</strong> <span th:text="${user.email}"></span></p>
+    </div>
+
+    <hr style="margin: 20px 0;">
+
+    <form th:action="@{'/admin/users/' + ${user.userId} + '/edit-roles'}" method="post">
+        <h3>Chọn vai trò:</h3>
+        <div class="roles-list">
+            <label th:each="role : ${allRoles}">
+                <input type="checkbox" name="roleNames" th:value="${role.roleName}"
+                       th:checked="${#sets.contains(userRoles, role.roleName)}" />
+                <span th:text="${role.roleName}"></span>
+            </label>
+        </div>
+
+        <div class="buttons">
+            <button type="submit" class="btn btn-save">Lưu thay đổi</button>
+            <a th:href="@{/admin/users}" class="btn btn-cancel">Hủy</a>
+        </div>
+    </form>
+</div>
+</body>
+</html>

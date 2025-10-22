@@ -1,11 +1,9 @@
-<!-- templates/categories/list.html -->
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <title>Danh sách danh mục</title>
 
-    <!-- CSS nội tuyến -->
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -63,32 +61,31 @@
         .actions a:hover {
             text-decoration: underline;
         }
+
     </style>
 
-    <!-- JS xác nhận xóa -->
     <script>
-        function confirmDelete(name) {
+        function confirmDelete(button) {
+            const name = button.getAttribute('data-category-name');
             return confirm("Bạn có chắc chắn muốn xóa danh mục '" + name + "' không?");
         }
     </script>
 </head>
 
 <body>
+<div th:replace="~{fragments/_header :: header}"></div>
 <h2>📂 Danh sách danh mục</h2>
 
-<!-- Form tìm kiếm -->
 <form th:action="@{/categories/search}" method="get">
     <input type="text" name="name" placeholder="Nhập tên danh mục..." th:value="${searchKey}">
     <button type="submit">🔍 Tìm kiếm</button>
     <a th:href="@{/categories}" class="btn">🔄 Tải lại</a>
 </form>
 
-<!-- Nút thêm mới -->
-<div style="text-align: right; margin-bottom: 10px;">
+<div sec:authorize="hasRole('ADMIN')" style="text-align: right; margin-bottom: 10px;">
     <a th:href="@{/categories/new}" class="btn">➕ Thêm danh mục mới</a>
 </div>
 
-<!-- Bảng danh mục -->
 <table>
     <thead>
     <tr>
@@ -107,8 +104,21 @@
         <td th:text="${category.description}"></td>
         <td class="actions">
             <a th:href="@{'/categories/edit/' + ${category.categoryId}}">✏️ Sửa</a>
-            <a th:href="@{'/categories/delete/' + ${category.categoryId}}"
-               th:onclick="'return confirmDelete(\'' + ${category.categoryName} + '\');'">🗑️ Xóa</a>
+
+            <form th:action="@{'/categories/delete/' + ${category.categoryId}}"
+                  th:method="post"
+                  style="display: inline; margin: 0; padding: 0;">
+
+                <button type="submit"
+                        style="background:none; border:none; color:#007bff; padding:0; cursor:pointer; text-decoration:none;"
+
+                        th:attr="data-category-name=${category.categoryName}"
+
+                        onclick="return confirmDelete(this);">
+
+                    🗑️ Xóa
+                </button>
+            </form>
         </td>
     </tr>
     <tr th:if="${#lists.isEmpty(categories)}">

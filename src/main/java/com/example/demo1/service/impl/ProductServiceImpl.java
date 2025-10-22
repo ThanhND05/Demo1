@@ -4,6 +4,7 @@ import com.example.demo1.converter.ProductConverter;
 import com.example.demo1.entity.Category;
 import com.example.demo1.entity.Product;
 import com.example.demo1.payload.ProductDTO;
+import com.example.demo1.repository.CategoryRepository;
 import com.example.demo1.repository.ProductRepository;
 import com.example.demo1.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,9 +13,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -22,14 +20,18 @@ public class ProductServiceImpl implements ProductService {
     private ProductRepository productRepository;
     @Autowired
     private ProductConverter productConverter;
-    
+    @Autowired
+    private CategoryRepository categoryRepository;
     @Override
-    public ProductDTO addProduct(ProductDTO product) {
-        Product entity   = productConverter.toEntity(product);
-        Category category = new Category();
-        category.setCategoryId(product.getCategoryId());
-        category.setCategoryName(product.getCategoryName());
+    public ProductDTO addProduct(ProductDTO productDTO) {
+        Product entity = productConverter.toEntity(productDTO);
+        Category category = categoryRepository.findById(productDTO.getCategoryId())
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy Category ID: " + productDTO.getCategoryId()));
         entity.setCategory(category);
+        entity.setImageUrl(productDTO.getImageUrl());
+        entity.setSize(productDTO.getSize());
+        entity.setColor(productDTO.getColor());
+        entity.setStockQuantity(productDTO.getStockQuantity());
         Product saved = productRepository.save(entity);
         return productConverter.toDTO(saved);
     }
@@ -42,16 +44,28 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductDTO updateProduct(ProductDTO product) {
-        Product existing = productRepository.findById(product.getProductId())
+    public ProductDTO updateProduct(ProductDTO productDTO) {
+        Product existing = productRepository.findById(productDTO.getProductId())
                 .orElseThrow(() -> new RuntimeException("Product not found"));
-        existing.setProductName(product.getProductName());
-        existing.setDescription(product.getDescription());
-        existing.setPrice(product.getPrice());
-        existing.setStockQuantity(product.getStockQuantity());
-        existing.setSize(product.getSize());
-        existing.setColor(product.getColor());
-        existing.setImageUrl(product.getImageUrl());
+        existing.setProductName(productDTO.getProductName());
+        existing.setDescription(productDTO.getDescription());
+        existing.setPrice(productDTO.getPrice());
+        existing.setStockQuantity(productDTO.getStockQuantity());
+        existing.setSize(productDTO.getSize());
+        existing.setColor(productDTO.getColor());
+
+        if (productDTO.getImageUrl() != null && !productDTO.getImageUrl().isEmpty()) {
+            existing.setImageUrl(productDTO.getImageUrl());
+        }
+
+        if (productDTO.getCategoryId() != null &&
+                !productDTO.getCategoryId().equals(existing.getCategory().getCategoryId())) {
+
+            Category category = categoryRepository.findById(productDTO.getCategoryId())
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy Category ID: " + productDTO.getCategoryId()));
+            existing.setCategory(category);
+        }
+
         Product updated = productRepository.save(existing);
         return productConverter.toDTO(updated);
     }

@@ -74,10 +74,10 @@
   </style>
 </head>
 <body>
+<div th:replace="~{fragments/_header :: header}"></div>
   <div class="container">
     <h2>Thông tin cá nhân</h2>
 
-    <!-- Hiển thị thông báo -->
     <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
     <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
 
@@ -86,14 +86,18 @@
       <p><label>Email:</label> <span th:text="${user.email}"></span></p>
       <p><label>Số điện thoại:</label> <span th:text="${user.phone}"></span></p>
       <p><label>Địa chỉ:</label> <span th:text="${user.address}"></span></p>
-      <p><label>Vai trò:</label> <span th:text="${user.role}"></span></p>
+        <p>
+            <label>Vai trò:</label>
+            <span>
+                <span th:each="role : ${user.roles}" th:text="${role.roleName}" th:append="' '"></span>
+            </span>
+        </p>
     </div>
 
     <a href="/user/me/edit" class="btn">✏️ Chỉnh sửa thông tin</a>
   </div>
 
   <script>
-    // Tự động ẩn thông báo sau 3 giây
     setTimeout(() => {
       const alerts = document.querySelectorAll('.alert');
       alerts.forEach(a => a.style.display = 'none');

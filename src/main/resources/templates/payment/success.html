@@ -44,14 +44,16 @@
   </script>
 </head>
 <body>
-
 <div class="success-box">
-  <div class="checkmark">✔</div>
-  <h2>Thanh toán thành công!</h2>
-  <p th:text="'Mã giao dịch: ' + ${paymentResponse.transactionId}"></p>
-  <p>Cảm ơn bạn đã mua hàng!</p>
-  <a th:href="@{'/orders/user/' + ${paymentResponse.userId}}">Xem đơn hàng của tôi</a>
-</div>
+    <div class="checkmark">✔</div>
+    <h2>Thanh toán thành công!</h2>
 
+    <p th:if="${paymentResponse.data != null and paymentResponse.data.transactionId != null}"
+       th:text="'Mã giao dịch: ' + ${paymentResponse.data.transactionId}"></p>
+
+    <p th:if="${paymentResponse != null}" th:text="${paymentResponse.message}"></p> <p>Cảm ơn bạn đã mua hàng!</p>
+
+    <a th:href="@{/orders/my-orders}">Xem đơn hàng của tôi</a>
+</div>
 </body>
 </html>

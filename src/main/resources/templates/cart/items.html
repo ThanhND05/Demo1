@@ -93,18 +93,45 @@
 <div class="container">
     <table>
         <thead>
-            <tr>
-                <th>ID sản phẩm</th>
-                <th>Tên sản phẩm</th>
-                <th>Giá</th>
-                <th>Số lượng</th>
-                <th>Thành tiền</th>
-                <th>Hành động</th>
-            </tr>
+        <tr>
+            <th>Sản phẩm</th>
+            <th>Giá</th>
+            <th>Số lượng (Cập nhật)</th>
+            <th>Thành tiền</th>
+            <th>Hành động</th>
+        </tr>
         </thead>
         <tbody>
-            <tr th:each="item : ${items}">
-                <td th:text="${item.productId}"></td>
-                <td th:text="${item.name}"></td>
-                <td th:text="${#numbers.formatDecimal(item.price, 0, 'POINT', 0, 'COMMA')} + ' ₫'"></td>
-                <td th:text="
+        <tr th:each="item : ${items}">
+            <td th:text="${item.product.productName}"></td>
+            <td th:text="${#numbers.formatDecimal(item.product.price, 0, 'POINT', 0, 'COMMA')} + ' ₫'"></td>
+
+            <td>
+                <form th:action="@{/cartitems/update}" method="post" style="display: flex; align-items: center;">
+                    <input type="hidden" name="cartItemId" th:value="${item.cartItemId}" />
+                    <input type="hidden" name="cartId" th:value="${cartId}" />
+                    <input type="hidden" name="product.productId" th:value="${item.product.productId}" />
+
+                    <input type="number" name="quantity" th:value="${item.quantity}" min="1" style="width: 60px; margin-right: 5px;">
+                    <button type="submit" style="background: #3182ce;">Cập nhật</button>
+                </form>
+            </td>
+
+            <td th:text="${#numbers.formatDecimal(item.product.price * item.quantity, 0, 'POINT', 0, 'COMMA')} + ' ₫'"></td>
+
+            <td>
+                <form th:action="@{'/cartitems/delete/' + ${item.cartItemId} + '/' + ${cartId}}"
+                      method="post"
+                      onsubmit="return confirm('Bạn có chắc muốn xóa sản phẩm này?');">
+                    <button type="submit" class="delete-btn" style="background: #e53e3e; cursor: pointer;">Xóa</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <a th:href="@{/cart/my-cart}" class="btn" style="margin-top: 20px;">⬅ Quay lại giỏ hàng</a>
+
+</div>
+</body>
+</html>

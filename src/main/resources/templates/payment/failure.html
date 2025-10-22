@@ -46,15 +46,14 @@
   </script>
 </head>
 <body>
-
 <div class="fail-box">
-  <div class="error">✖</div>
-  <h2>Thanh toán thất bại!</h2>
-  <p th:text="${paymentResponse.message}"></p>
-  <p>Vui lòng thử lại hoặc chọn phương thức khác.</p>
-  <a href="#" th:onclick="'retryPayment(' + ${paymentResponse.orderId} + ');return false;'">Thử lại</a>
-  <a th:href="@{'/orders/' + ${paymentResponse.orderId}}">Quay lại đơn hàng</a>
-</div>
+    <div class="error">✖</div>
+    <h2>Thanh toán thất bại!</h2>
+    <p th:if="${paymentResponse != null}" th:text="${paymentResponse.message}"></p> <p>Vui lòng thử lại hoặc chọn phương thức khác.</p>
 
+    <a href="#" th:onclick="'retryPayment(' + ${orderId} + ');return false;'">Thử lại</a>
+
+    <a th:href="@{'/orders/' + ${orderId}}">Quay lại đơn hàng</a>
+</div>
 </body>
 </html>

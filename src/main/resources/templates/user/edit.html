@@ -72,7 +72,7 @@
     <h2>Cập nhật thông tin cá nhân</h2>
 
     <form action="/user/me" method="post" onsubmit="return confirmUpdate()">
-      <input type="hidden" name="id" th:value="${user.id}">
+      <input type="hidden" name="userId" th:value="${user.userId}">
 
       <label>Họ và tên</label>
       <input type="text" name="name" th:value="${user.name}" required>
@@ -94,7 +94,6 @@
   </div>
 
   <script>
-    // Xác nhận khi người dùng bấm lưu
     function confirmUpdate() {
       return confirm("Bạn có chắc muốn cập nhật thông tin cá nhân?");
     }

@@ -57,11 +57,10 @@
 </head>
 <body>
 
-<form th:action="@{'/orders/user/' + ${userId}}" method="post" onsubmit="return validateForm()">
-  <h2>Tạo đơn hàng mới</h2>
-  <label>Địa chỉ giao hàng:</label>
-  <input type="text" id="shippingAddress" name="shippingAddress" placeholder="Nhập địa chỉ giao hàng">
-  <button type="submit">Tạo đơn hàng</button>
+<form th:action="@{/orders/create-from-cart}" method="post" onsubmit="return validateForm()">
+    <h2>Tạo đơn hàng mới</h2>
+    <label>Địa chỉ giao hàng:</label>
+    <input type="text" id="shippingAddress" name="shippingAddress" placeholder="Nhập địa chỉ giao hàng" required> <button type="submit">Xác nhận đặt hàng</button>
 </form>
 
 </body>

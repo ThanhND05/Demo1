@@ -58,11 +58,22 @@
             color: white;
             border-radius: 4px;
         }
+        .btn {
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 5px;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            color: white;
+        }
     </style>
 </head>
 <body>
+<div th:replace="~{fragments/_header :: header}"></div>
 <h1>Danh sách người dùng</h1>
-
+<div th:if="${successMessage}" style="color: green; margin-bottom: 10px; padding: 10px; background-color: #d4edda; border: 1px solid #c3e6cb; border-radius: 5px;" th:text="${successMessage}"></div>
+<div th:if="${errorMessage}" style="color: red; margin-bottom: 10px; padding: 10px; background-color: #f8d7da; border: 1px solid #f5c6cb; border-radius: 5px;" th:text="${errorMessage}"></div>
 <table>
     <thead>
     <tr>
@@ -75,17 +86,29 @@
     </thead>
     <tbody>
     <tr th:each="user : ${users.content}">
-        <td th:text="${user.id}"></td>
+        <td th:text="${user.userId}"></td>
         <td th:text="${user.name}"></td>
         <td th:text="${user.email}"></td>
         <td>
             <span th:each="role : ${user.roles}" th:text="${role.roleName}" th:append="' '"></span>
         </td>
-        <td>
-            <a th:href="@{'/admin/users/' + ${user.id} + '/delete'}" class="delete-btn"
-               onclick="return confirm('Bạn có chắc chắn muốn xóa người dùng này không?');">
-                Xóa
+        <td> <th:block th:if="${user.userId != superAdminId}">
+            <form th:action="@{'/admin/users/' + ${user.userId} + '/delete'}"
+                  th:method="post"
+                  style="display: inline-block; margin: 0;">
+
+                <button type="submit" class="delete-btn" onclick="return confirm('Bạn có chắc chắn muốn xóa người dùng này không?');">
+                    Xóa
+                </button>
+            </form>
+
+            <a th:href="@{'/admin/users/' + ${user.userId} + '/edit-roles'}"
+               class="btn"
+               style="background-color: #ffc107; color: black; margin-left: 5px;">
+                Sửa vai trò
             </a>
+        </th:block>
+            <span th:if="${user.userId == superAdminId}" style="color: gray; font-style: italic;">(Super Admin)</span>
         </td>
     </tr>
     </tbody>
