@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Tạo đơn hàng</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f7f7f7;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    form {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      width: 400px;
+    }
+    h2 {
+      text-align: center;
+      color: #333;
+    }
+    input[type=text] {
+      width: 100%;
+      padding: 10px;
+      margin-top: 8px;
+      margin-bottom: 16px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    button {
+      width: 100%;
+      background: #007bff;
+      color: white;
+      padding: 10px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+  </style>
+  <script>
+    function validateForm() {
+      let addr = document.getElementById("shippingAddress").value.trim();
+      if (addr === "") {
+        alert("Vui lòng nhập địa chỉ giao hàng!");
+        return false;
+      }
+      return true;
+    }
+  </script>
+</head>
+<body>
+
+<form th:action="@{/orders/create-from-cart}" method="post" onsubmit="return validateForm()">
+    <h2>Tạo đơn hàng mới</h2>
+    <label>Địa chỉ giao hàng:</label>
+    <input type="text" id="shippingAddress" name="shippingAddress" placeholder="Nhập địa chỉ giao hàng" required> <button type="submit">Xác nhận đặt hàng</button>
+</form>
+
+</body>
+</html>

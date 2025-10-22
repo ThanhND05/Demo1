@@ -1,16 +1,12 @@
 package com.example.demo1.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -52,7 +48,7 @@ public class Orders {
     }
     public void addItem(OrderItems item) {
         orderItems.add(item);
-        item.setOrder(this); // Thiết lập quan hệ hai chiều
+        item.setOrder(this);
         calculateTotalAmount();
     }
 

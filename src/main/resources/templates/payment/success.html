@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Thanh toán thành công</title>
+  <style>
+    body {
+      font-family: "Segoe UI", sans-serif;
+      background: linear-gradient(135deg, #a8ff78, #78ffd6);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .success-box {
+      background: white;
+      padding: 30px 40px;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+    .checkmark {
+      font-size: 60px;
+      color: #28a745;
+    }
+    h2 { color: #333; margin-top: 10px; }
+    p { color: #555; }
+    a {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 10px 20px;
+      background: #007bff;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+    }
+    a:hover { background: #0056b3; }
+  </style>
+  <script>
+    setTimeout(() => {
+      console.log("Redirecting to orders...");
+    }, 1000);
+  </script>
+</head>
+<body>
+<div class="success-box">
+    <div class="checkmark">✔</div>
+    <h2>Thanh toán thành công!</h2>
+
+    <p th:if="${paymentResponse.data != null and paymentResponse.data.transactionId != null}"
+       th:text="'Mã giao dịch: ' + ${paymentResponse.data.transactionId}"></p>
+
+    <p th:if="${paymentResponse != null}" th:text="${paymentResponse.message}"></p> <p>Cảm ơn bạn đã mua hàng!</p>
+
+    <a th:href="@{/orders/my-orders}">Xem đơn hàng của tôi</a>
+</div>
+</body>
+</html>

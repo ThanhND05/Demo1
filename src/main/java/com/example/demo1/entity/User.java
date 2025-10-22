@@ -1,11 +1,8 @@
 package com.example.demo1.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
 
@@ -35,13 +32,13 @@ public class User {
     @JoinTable(
             name = "user_roles",
             joinColumns = @JoinColumn(
-                    name = "userId", // cột trong bảng user_roles tham chiếu đến users
-                    referencedColumnName = "userId", // PK của bảng users
+                    name = "userId",
+                    referencedColumnName = "userId",
                     foreignKey = @ForeignKey(name = "FK_user_roles_user")
             ),
             inverseJoinColumns = @JoinColumn(
-                    name = "roleId", // cột trong bảng user_roles tham chiếu đến roles
-                    referencedColumnName = "roleId", // PK của bảng roles
+                    name = "roleId",
+                    referencedColumnName = "roleId",
                     foreignKey = @ForeignKey(name = "FK_user_roles_role")
             )
     )
