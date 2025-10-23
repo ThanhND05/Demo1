@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8">
+  <title>Đơn hàng của bạn</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+
+  <!-- Font và Icon -->
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+  <link rel="icon" href="image/lyn_acc.avif">
+
+  <style>
+    h2 {
+      text-align: center;
+      color: #2c7a7b;
+      margin-top: 150px;
+      font-size: 26px;
+      letter-spacing: 0.5px;
+    }
+
+    table {
+      width: 90%;
+      margin: 30px auto;
+      border-collapse: collapse;
+      background: white;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    th, td {
+      padding: 14px;
+      text-align: center;
+      border-bottom: 1px solid #eee;
+      font-size: 15px;
+    }
+
+    th {
+      background-color: #2c7a7b;
+      color: white;
+      text-transform: uppercase;
+    }
+    tr:hover {
+      background-color: #f9fdfd;
+      transition: 0.2s;
+    }
+
+    /* Nút hành động */
+    .btn {
+      display: inline-block;
+      padding: 8px 12px;
+      border-radius: 6px;
+      text-decoration: none;
+      color: white;
+      background-color: #2c7a7b;
+      font-size: 15px;
+      margin: 3px;
+      transition: all 0.3s ease;
+      
+    }
+
+    .btn:hover {
+      background-color: #285e61;
+      transform: translateY(-2px);
+    }
+
+    .btn-pay {
+      background-color: #38a169;
+    }
+
+    .btn-pay:hover {
+      background-color: #2f855a;
+    }
+
+    .pagination {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .pagination a {
+      padding: 8px 12px;
+      background: #2c7a7b;
+      color: white;
+      text-decoration: none;
+      border-radius: 4px;
+      margin: 0 3px;
+      transition: 0.3s;
+    }
+
+    .pagination a:hover {
+      background: #285e61;
+    }
+
+    .pagination a.active {
+      background: #285e61;
+      font-weight: bold;
+    }
+
+  </style>
+</head>
+<body>
+<div th:replace="~{fragments/_header :: header}"></div>
+
+<h2>Đơn hàng của bạn</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Mã đơn</th>
+      <th>Ngày tạo</th>
+      <th>Trạng thái</th>
+      <th>Tổng tiền</th>
+      <th>Cập nhật</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr th:each="order : ${ordersPage.content}">
+      <td th:text="${order.orderId}"></td>
+      <td th:text="${#temporals.format(order.orderDate, 'dd/MM/yyyy HH:mm')}"></td>
+      <td th:text="${order.status}"></td>
+      <td th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></td>
+
+      <!-- Cột hành động -->
+      <td>
+        <a th:href="@{'/orders/' + ${order.orderId}}" class="btn">📄 Xem chi tiết</a>
+        <a th:if="${order.status.name() == 'PENDING'}"
+           th:href="@{'/payments/order/' + ${order.orderId}}"
+           class="btn btn-pay">💳 Thanh toán</a>
+      </td>
+    </tr>
+
+    <tr th:if="${ordersPage.content.isEmpty()}">
+      <td colspan="5" style="text-align: center; color: gray;">Bạn chưa có đơn hàng nào.</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="pagination" th:if="${ordersPage.totalPages > 0}">
+  <a th:if="${!ordersPage.first}"
+     th:href="@{/orders/my-orders(page=${currentPage - 1})}">Trước</a>
+
+  <a th:each="i : ${#numbers.sequence(0, ordersPage.totalPages - 1)}"
+     th:classappend="${i == currentPage} ? 'active'"
+     th:href="@{/orders/my-orders(page=${i})}"
+     th:text="${i + 1}">1</a>
+
+  <a th:if="${!ordersPage.last}"
+     th:href="@{/orders/my-orders(page=${currentPage + 1})}">Sau</a>
+</div>
+<!-- Footer -->
+  <section class="contact_container">
+    <div class="logo2" style="color:white">
+      <h1>LYN</h1>
+    </div>
+    <div class="contact">
+      <div class="fb-in">
+        <h6>FOLLOW US</h6>
+        <a href="https://web.facebook.com/le.duy.hungg.2025" target="_blank"><i class='bx bxl-facebook-circle'></i></a>
+        <a href="https://www.instagram.com/ldhung_1401/" target="_blank"><i class='bx bxl-instagram'></i></a>
+        <a href="https://www.youtube.com/@duyhung8919" target="_blank"><i class='bx bxl-youtube'></i></a>
+        <a><i class='bx bxl-twitter'></i></a>
+        <a><i class='bx bxl-tiktok'></i></a>
+      </div>
+
+      <div class="mail">
+        <h6>CONTACT</h6>
+        <p><i class='bx bx-envelope'></i> hungleduy278@gmail.com</p>
+        <p><i class='bx bx-phone-call'></i> 0917947492</p>
+      </div>
+
+      <div class="support">
+        <h6>SUPPORT</h6>
+        <p>Cách thức mua hàng</p>
+        <p>Chính sách bảo mật</p>
+        <p>Chính sách bảo hành và đổi trả</p>
+      </div>
+    </div>
+  </section>
+<!-- /Footer -->
+</body>
+</html>

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Cập nhật thông tin cá nhân</title>
+  <style>
+    body {
+      font-family: "Segoe UI", sans-serif;
+      background-color: #f4f6f8;
+      margin: 0;
+    }
+
+    .container {
+      width: 45%;
+      margin: 60px auto;
+      background: white;
+      border-radius: 12px;
+      padding: 30px 40px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      text-align: center;
+      color: #2c7a7b;
+      margin-bottom: 25px;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+      color: #444;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 15px;
+      box-sizing: border-box;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 10px 20px;
+      background: #2c7a7b;
+      color: white;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+
+    .btn:hover {
+      background: #285e61;
+    }
+
+    .btn-cancel {
+      background: #6c757d;
+      margin-left: 10px;
+      text-decoration: none;
+    }
+
+    .btn-cancel:hover {
+      background: #5a6268;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Cập nhật thông tin cá nhân</h2>
+
+    <form action="/user/me" method="post" onsubmit="return confirmUpdate()">
+      <input type="hidden" name="userId" th:value="${user.userId}">
+
+      <label>Họ và tên</label>
+      <input type="text" name="name" th:value="${user.name}" required>
+
+      <label>Email</label>
+      <input type="email" name="email" th:value="${user.email}" readonly>
+
+      <label>Số điện thoại</label>
+      <input type="text" name="phone" th:value="${user.phone}" pattern="[0-9]{9,11}" title="Số điện thoại phải gồm 9-11 chữ số" required>
+
+      <label>Địa chỉ</label>
+      <textarea name="address" rows="3" th:text="${user.address}" required></textarea>
+
+      <div>
+        <button type="submit" class="btn">💾 Lưu thay đổi</button>
+        <a href="/user/me" class="btn btn-cancel">Hủy</a>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    function confirmUpdate() {
+      return confirm("Bạn có chắc muốn cập nhật thông tin cá nhân?");
+    }
+  </script>
+</body>
+</html>

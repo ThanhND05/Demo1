@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Đăng nhập</title>
+  <style>
+    body {
+      font-family: "Segoe UI", sans-serif;
+      background: white;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .login-container {
+      background: white;
+      padding: 40px 50px;
+      border-radius: 10px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+      width: 400px;
+      text-align: center;
+    }
+    h2 {
+      color: #2c3e50;
+      margin-bottom: 20px;
+    }
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    button {
+      width: 100%;
+      background: #3498db;
+      color: white;
+      padding: 12px;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #2980b9;
+    }
+    .error {
+      color: #e74c3c;
+      background: #fceae9;
+      border: 1px solid #e74c3c;
+      border-radius: 6px;
+      padding: 8px;
+      margin-bottom: 15px;
+    }
+    .register-link {
+      margin-top: 15px;
+      display: block;
+    }
+    .show-password {
+      float: right;
+      margin-top: -30px;
+      margin-right: 10px;
+      cursor: pointer;
+      color: #3498db;
+      font-size: 12px;
+    }
+    .success {
+        color: #27ae60;
+        background: #e8f9f0;
+        border: 1px solid #2ecc71;
+        border-radius: 6px;
+        padding: 8px;
+        margin-bottom: 15px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="login-container">
+  <h2>Đăng nhập</h2>
+
+  <!-- Hiển thị lỗi -->
+  <div th:if="${error}" class="error" th:text="${error}"></div>
+
+  <form th:action="@{/auth/login}" method="post">
+    <input type="text" name="usernameOrEmail" placeholder="Tên đăng nhập hoặc Email" required>
+    <input type="password" id="password" name="password" placeholder="Mật khẩu" required>
+    <span class="show-password" onclick="togglePassword()">👁 Hiện</span>
+
+    <button type="submit">Đăng nhập</button>
+  </form>
+
+  <a th:href="@{/auth/register}" class="register-link">Chưa có tài khoản?  Đăng ký ngay</a>
+</div>
+
+<script>
+  function togglePassword() {
+    const pwd = document.getElementById("password");
+    if (pwd.type === "password") {
+      pwd.type = "text";
+      event.target.textContent = "🙈 Ẩn";
+    } else {
+      pwd.type = "password";
+      event.target.textContent = "👁 Hiện";
+    }
+  }
+</script>
+
+</body>
+</html>

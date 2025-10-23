@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Thanh toán đơn hàng</title>
+  <style>
+    body {
+      font-family: "Segoe UI", sans-serif;
+      background: linear-gradient(135deg, #96efdf, #bbc2e5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .payment-container {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      width: 400px;
+      text-align: center;
+    }
+    h2 {
+      color: #333;
+      margin-bottom: 20px;
+    }
+    .methods {
+      text-align: left;
+      margin: 20px 0;
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      cursor: pointer;
+    }
+    button {
+      background: #28a745;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      width: 100%;
+    }
+    button:hover {
+      background: #218838;
+    }
+    .back {
+      display: inline-block;
+      margin-top: 15px;
+      text-decoration: none;
+      color: #007bff;
+    }
+    .back:hover { text-decoration: underline; }
+  </style>
+  <script>
+    function validatePayment() {
+      const method = document.querySelector('input[name="method"]:checked');
+      if (!method) {
+        alert("Vui lòng chọn phương thức thanh toán!");
+        return false;
+      }
+      return confirm("Xác nhận thanh toán qua " + method.value + "?");
+    }
+  </script>
+</head>
+<body>
+
+<div class="payment-container">
+  <h2>Thanh toán đơn hàng</h2>
+  <form th:action="@{'/payments/order/' + ${orderId}}" method="post" onsubmit="return validatePayment()">
+    <div class="methods">
+      <label><input type="radio" name="method" value="VNPAY"> VNPay</label>
+      <label><input type="radio" name="method" value="MOMO"> MoMo</label>
+      <label><input type="radio" name="method" value="COD"> Thanh toán khi nhận hàng (COD)</label>
+    </div>
+    <button type="submit">Xác nhận thanh toán</button>
+  </form>
+  <a class="back" th:href="@{'/orders/' + ${orderId}}">← Quay lại đơn hàng</a>
+</div>
+
+</body>
+</html>

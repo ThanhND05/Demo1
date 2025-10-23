@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Đăng ký tài khoản</title>
+  <style>
+    body {
+      font-family: "Segoe UI", sans-serif;
+      background: white;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .register-container {
+      background: white;
+      padding: 40px 50px;
+      border-radius: 10px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+      width: 450px;
+    }
+    h2 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 20px;
+    }
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    button {
+      width: 100%;
+      background: #27ae60;
+      color: white;
+      padding: 12px;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #1e8449;
+    }
+    .error {
+      color: #e74c3c;
+      background: #fceae9;
+      border: 1px solid #e74c3c;
+      border-radius: 6px;
+      padding: 8px;
+      margin-bottom: 15px;
+    }
+    .success {
+      color: #27ae60;
+      background: #e8f9f0;
+      border: 1px solid #2ecc71;
+      border-radius: 6px;
+      padding: 8px;
+      margin-bottom: 15px;
+    }
+    .login-link {
+      text-align: center;
+      display: block;
+      margin-top: 10px;
+      color: #3498db;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+<div class="register-container">
+  <h2>Đăng ký tài khoản</h2>
+
+  <div th:if="${error}" class="error" th:text="${error}"></div>
+  <div th:if="${success}" class="success" th:text="${success}"></div>
+
+  <form th:action="@{/auth/register}" th:object="${user}" method="post">
+    <input type="text" th:field="*{username}" placeholder="Tên đăng nhập" required>
+    <input type="email" th:field="*{email}" placeholder="Email" required>
+    <input type="password" th:field="*{password}" id="password" placeholder="Mật khẩu" required>
+    <input type="text" th:field="*{phone}" placeholder="Số điện thoại" required>
+    <input type="text" th:field="*{address}" placeholder="Địa chỉ" required>
+
+    <button type="submit">Đăng ký</button>
+  </form>
+
+  <a th:href="@{/auth/login}" class="login-link">Đã có tài khoản? Đăng nhập</a>
+</div>
+
+</body>
+</html>
