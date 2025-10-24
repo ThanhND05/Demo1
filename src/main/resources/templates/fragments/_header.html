@@ -16,7 +16,7 @@
         <a th:href="@{/}" style="color:black;"> LYN</a>
     </div>
     <div class="navbar">
-        <a th:href="@{/}" style="font-size: 25px;"><i class='bx bx-home'></i> Trang Chủ</a>
+        <a th:href="@{/}" ><i class='bx bx-home'></i> Trang Chủ</a>
         <a th:href="@{/products}"><i class='bx bx-shopping-bag'></i> Sản Phẩm</a>
         <a sec:authorize="hasRole('ADMIN')" th:href="@{/categories}">Danh Mục</a>
         <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin/payments}">Doanh Thu</a>
