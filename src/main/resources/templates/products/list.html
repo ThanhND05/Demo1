@@ -13,8 +13,31 @@
     
     <style>
         .container {
-            margin-top: 70px;
+            margin-top: 80px;
         }
+        .btn-container {
+            display: flex;
+            justify-content: center; /* căn giữa theo chiều ngang */
+            margin-top: 20px;
+        }
+        .btn1 {
+            display: flex;
+            justify-content: center;   /* Căn giữa theo chiều ngang */
+            align-items: center;       /* Căn giữa theo chiều dọc */
+            width: 180px;              /* Tăng chiều rộng cho dễ nhìn */
+            height: 40px;              /* Đủ cao để chữ không bị dính */
+            background-color: #2c7a7b; /* Màu nền nút */
+            color: white;              /* Màu chữ */
+            border-radius: 8px;        /* Bo góc */
+            text-decoration: none;     /* Bỏ gạch chân */
+            font-weight: bold;         /* Chữ đậm hơn */
+            transition: background-color 0.3s ease; /* Hiệu ứng hover */
+        }
+
+        .btn1:hover {
+            background-color: #285e61; /* Đổi màu khi rê chuột */
+        }
+
         /* --- Product Grid Container --- */
         .product-grid {
             display: flex;
@@ -225,13 +248,10 @@
 
 <body>
     <div th:replace="~{fragments/_header :: header}"></div>
-    <video width="100%" height="695px" controls autoplay muted>
-        <source src="image/banner/video_product.mp4" type="video/mp4">
-    </video>
 
+    <img style="width:100%; margin-top: 80px;" src="image/banner/banner_product_2.webp">
 
 <div class="container">
-
     <div class="search-box">
         <form th:action="@{/products}" method="get" class="filter-search-form">
 
@@ -249,9 +269,9 @@
             <a th:href="@{/products}" class="btn" style="background-color: #6c757d;">Reset</a>
         </form>
     </div>
-
-    <a href="/products/form" class="btn" sec:authorize="hasRole('ADMIN')">+ Thêm sản phẩm mới</a>
-
+    <div class="btn-container">
+        <a href="/products/form" class="btn1" sec:authorize="hasRole('ADMIN')" style=" text-decoration: none;">+ Thêm sản phẩm mới</a>
+    </div>
     <div class="product-grid">
 
         <div class="product-card" th:each="p : ${products}">
@@ -269,7 +289,7 @@
                 <form sec:authorize="hasRole('ADMIN')" th:action="@{'/products/delete/' + ${p.productId}}"
                       method="post"
                       style="display:inline;">
-                    <button type="submit" class="btn" style="background:red;">Xóa</button>
+                    <button type="submit" class="btn" style="color:red;">Xóa</button>
                 </form>
             </div>
         </div>
@@ -299,7 +319,7 @@
         }
     });
 </script>
-<img style="width:100%;" src="image/banner/banner_product_2.webp">
+    <img style="width:100%;" src="image/banner/banner_home.webp">
 
 <!-- Footer -->
   <section class="contact_container">
@@ -332,5 +352,4 @@
   </section>
 <!-- /Footer -->
 </body>
-
 </html>
