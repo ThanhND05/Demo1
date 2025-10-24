@@ -5,12 +5,17 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.nio.file.Paths;
+
 @Configuration
 public class MvcConfig implements WebMvcConfigurer {
+
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        // Lấy đường dẫn tuyệt đối tới thư mục uploads
         String uploadDir = Paths.get("src/main/resources/static/uploads").toAbsolutePath().toString();
+
+        // Cấu hình ResourceHandler
         registry.addResourceHandler("/uploads/**")
-                .addResourceLocations("file:/" + uploadDir + "/");
+                .addResourceLocations("file:" + uploadDir + "/");
     }
 }

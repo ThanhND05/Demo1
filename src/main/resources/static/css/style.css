@@ -1,0 +1,238 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    background-color: #f8f9fa;
+}
+.content-section {
+    max-width: 1200px;
+    margin: 55px auto 1px auto;
+    padding: 0 20px;
+    text-align: center;
+}
+.content-section h2 {
+    color: #333;
+    margin-bottom: 30px;
+    border-bottom: 2px solid #2c7a7b;
+    display: inline-block;
+    padding-bottom: 5px;
+}
+.logo {
+  font-family: "Rubik Moonrocks", sans-serif;
+  font-size: 50px;
+  font-style: normal;
+  
+  & a{
+    text-decoration: none;
+  }
+}
+/* Menu */
+.menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 40px 100px 40px 100px;
+  background-color: white;
+  border-bottom: 2px solid lightgray;
+  z-index: 1000;
+}
+.navbar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 50px;
+  & a{
+    text-decoration: none;
+    color: black;
+    font-size: 18px;
+    transition: color 0.5s ease;
+    transition: transform 0.5s ease;
+  }
+  & a:hover{
+    color: #e73370;
+    transform: scale(1.1);
+  }
+}
+.left{
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+.navbar .username {
+  color: black;
+  padding: 14px 10px;
+  
+}
+.navbar .logout-btn {
+    color:  black;
+    border: 2px solid #e45383;
+    border-radius: 10px;
+    padding: 14px 16px;
+    background-color: #d42e65;
+    font-size: 18px;
+    transition: color 0.5s ease;
+    transition: transform 0.5s ease;
+
+}
+.navbar .logout-btn:hover {
+  transform: scale(1.1);
+  background-color: #ee7ca2
+}
+
+/* sp nổi bât */
+.price{
+  font-weight: 1000px;
+  font-size: 20px;
+  color: rgb(219, 47, 47);
+}
+.name_product{
+  font-size: 20px;
+  font-weight: 20px;
+}
+.sup {
+  font-size: 0.8em;
+  vertical-align: super;
+}
+.new_product{
+    margin: 20px 30px 30px 30px;
+    display: grid;
+    padding: 10px 50px 10px 75px;
+    grid-template-columns: repeat(4,1fr);
+    & img{
+        width: 290px;
+        height: 320px;
+    }
+}
+.new1,
+.new2,
+.new3,
+.new4{
+    width: 300px;
+    height: 400px;
+    padding: 5px;
+    transition: transform 0.2s;
+}
+.new1:hover,
+.new2:hover,
+.new3:hover,
+.new4:hover{
+    border: 0.5px solid black;
+    transform: scale(1.08);
+}
+/* /sp nổi bât */
+
+/* Xem ngay */
+.btn-view {
+    display: flex;
+    justify-content: center;   /* căn giữa ngang nội dung (link) */
+    align-items: center;       /* căn giữa dọc */
+    width: 120px;
+    height: 40px;
+    background-color: #2c7a7b;
+    border: none;
+    border-radius: 8px;
+    transition: 0.3s;
+    margin: 20px auto;         /* căn giữa cả nút trong trang */
+}
+.btn-view a {
+    text-decoration: none;
+    color: white;
+    font-weight: 600;
+    font-size: 16px;
+}
+.btn-view:hover {
+    background-color: #285e61;
+    transform: scale(1.05);
+}
+
+
+/* /Xem ngay */
+
+
+/* Slideshow */
+.slideshow {
+  position: relative;
+  width: 100%;
+  height: 600px;
+  overflow: hidden;
+  margin-top: 80px;
+  object-fit:contain;
+}
+.slide {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+}
+.slide.active {
+  opacity: 1;
+}
+/* /Slideshow */
+
+/* Contact */
+.logo2 {
+  font-family: "Nosifer", sans-serif;
+  font-weight: 400;
+  margin-top: 100px;
+  margin-bottom: 50px;
+  text-align: center;
+}
+.contact_container{
+    width:100%;
+    height:550px;
+    background-color: black;
+}
+.contact{
+    display:flex;
+    justify-content: space-evenly;
+    & p{
+      font-size:20px;
+    }
+    & h6{
+      color:#e73370;
+    }
+}
+.fb-in{
+    display:flex;
+    flex-direction: column;
+    gap:10px;
+    color:white;
+    font-size: 30px;
+    & a {
+      display: inline-block;
+      color: white;
+      transition: color 0.5s ease, transform 0.5s ease;
+      transform-origin: center;
+    }
+    & a:hover {
+      
+      color: #e73370;
+      transform: scale(1.1);
+    }
+}
+.mail{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    color:white;
+    font-size:30px;
+}
+.support{
+    display:flex;
+    flex-direction: column;
+    gap:10px;
+    color:white;
+    font-size:30px;
+}
+/* /Contact */
