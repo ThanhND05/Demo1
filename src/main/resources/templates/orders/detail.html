@@ -171,9 +171,8 @@
         <tbody>
         <tr th:each="item : ${order.orderItems}">
             <td>
-                <img th:src="@{'/' + ${item.product.imageUrl}}" 
-                      alt="Ảnh sản phẩm" 
-                      style="width: 55px; height: 55px; border-radius: 6px; object-fit: cover;">
+                <img th:src="@{'/uploads/' + ${#strings.substring(item.product.imageUrl, 9)}}" 
+    style="width: 55px; height: 55px; border-radius: 6px; object-fit: cover;" alt="Ảnh sản phẩm">
 
             </td>
             <td>
@@ -222,3 +221,4 @@
 </div>
 </body>
 </html>
+
