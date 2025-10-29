@@ -34,11 +34,6 @@ public class PaymentController {
     public String showPaymentPage(@PathVariable Integer orderId, Authentication authentication, Model model) {
         User currentUser = getCurrentUser(authentication);
         OrdersDTO order = ordersService.getOrderById(orderId);
-        if (!order.getUserId().equals(currentUser.getUserId())) {
-            model.addAttribute("error", "Bạn không có quyền thanh toán đơn hàng này.");
-            return "error/403";
-        }
-
         if (order.getStatus() != com.example.demo1.entity.OrderStatus.PENDING) {
             model.addAttribute("error", "Đơn hàng này không thể thanh toán (trạng thái: " + order.getStatus() + ").");
             return "orders/detail";
@@ -97,4 +92,5 @@ public class PaymentController {
         model.addAttribute("orderId", orderId);
         return "payment/failure";
     }
+
 }
