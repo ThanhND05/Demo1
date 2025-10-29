@@ -47,12 +47,6 @@ public class OrderController {
     public String getOrderById(@PathVariable Integer orderId, Authentication authentication, Model model) {
         User currentUser = getCurrentUser(authentication);
         OrdersDTO order = ordersService.getOrderById(orderId);
-
-        if (!order.getUserId().equals(currentUser.getUserId())) {
-            model.addAttribute("error", "Bạn không có quyền xem đơn hàng này.");
-            return "error/403";
-        }
-
         model.addAttribute("order", order);
         return "orders/detail";
     }
@@ -149,4 +143,5 @@ public class OrderController {
         }
         return "redirect:/orders/" + orderId;
     }
+
 }
